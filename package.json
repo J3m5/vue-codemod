@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "watch": "tsc --build --watch",
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
     "test": "jest",
