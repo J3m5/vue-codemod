@@ -13,6 +13,7 @@ import {
 import * as CompilerDom from '@vue/compiler-dom'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { Statement } from '@babel/types'
+import { LRUCache } from 'lru-cache'
 
 /**
  * The following function is adapted from https://github.com/psalaets/vue-sfc-descriptor-to-string/blob/master/index.js
@@ -188,10 +189,10 @@ export interface SFCParseResult {
 }
 
 const SFC_CACHE_MAX_SIZE = 500
-const sourceToSFC = new (require('lru-cache'))(SFC_CACHE_MAX_SIZE) as Map<
-  string,
-  SFCParseResult
->
+
+const sourceToSFC = new LRUCache<string, SFCParseResult>({
+  max: SFC_CACHE_MAX_SIZE
+})
 
 export function parse(
   source: string,
