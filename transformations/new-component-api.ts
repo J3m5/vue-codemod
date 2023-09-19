@@ -2,7 +2,7 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 import type { GlobalApi } from '../src/global'
-import * as _ from 'lodash'
+import { upperFirst, camelCase } from 'lodash'
 import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
@@ -41,7 +41,7 @@ export const transformAST: ASTTransformation = context => {
         componentApi = { name: componentArgs[1].name, path: filename }
       } else {
         componentApi = {
-          name: _.upperFirst(_.camelCase(componentArgs[0].value)),
+          name: upperFirst(camelCase(componentArgs[0].value)),
           path: filename
         }
       }
