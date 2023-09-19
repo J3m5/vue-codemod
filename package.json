@@ -45,7 +45,7 @@
     "source-map": "^0.6.1",
     "table": "^6.7.1",
     "vue-eslint-parser": "^7.6.0",
-    "yargs": "^16.2.0"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.9.2",
@@ -57,7 +57,7 @@
     "@types/lodash": "^4.14.198",
     "@types/node": "^12.12.47",
     "@types/readline-sync": "^1.4.3",
-    "@types/yargs": "^15.0.4",
+    "@types/yargs": "^17.0.24",
     "@typescript-eslint/parser": "^6.7.2",
     "ast-types": "0.12.1",
     "eslint": "^8.49.0",

@@ -67,7 +67,8 @@ const {
   ])
   .help()
   .alias('h', 'help')
-  .alias('v', 'version').argv
+  .alias('v', 'version')
+  .parseSync()
 
 let logger: Console = console
 if (formatter === 'log') {
