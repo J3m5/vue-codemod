@@ -1,15 +1,11 @@
 import type { Operation } from './operationUtils'
-import type VueTransformation from './VueTransformation'
+// import type VueTransformation from './VueTransformation'
 import { Node } from 'vue-eslint-parser/ast/nodes'
 import * as parser from 'vue-eslint-parser'
 import { getCntFunc } from './report'
+import type { FileInfo } from 'jscodeshift'
 
 const BOM = '\uFEFF'
-
-type FileInfo = {
-  path: string
-  source: string
-}
 
 export type Context = {
   file: FileInfo
@@ -66,8 +62,8 @@ export function createTransformAST(
 
 export default function astTransformationToVueTransformationModule<
   Params = any
->(transformAST: VueASTTransformation<Params>): VueTransformation {
-  const transform: VueTransformation = (file, options: Params) => {
+>(transformAST: VueASTTransformation<Params>) {
+  const transform = (file: FileInfo, options: Params) => {
     const source = file.source
     const fixOperations: Operation[] = transformAST({ file }, options)
 

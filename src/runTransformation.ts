@@ -1,4 +1,4 @@
-import jscodeshift, { Transform, Parser } from 'jscodeshift'
+import jscodeshift, { Transform, Parser, FileInfo } from 'jscodeshift'
 // @ts-ignore
 import getParser from 'jscodeshift/src/getParser'
 import createDebug from 'debug'
@@ -9,11 +9,6 @@ import type { SFCDescriptor } from './sfcUtils'
 import VueTransformation from './VueTransformation'
 
 const debug = createDebug('vue-codemod:run')
-
-type FileInfo = {
-  path: string
-  source: string
-}
 
 type JSTransformation = Transform & {
   type: 'JSTransformation'
@@ -53,7 +48,7 @@ export default function runTransformation(
   }
 
   const { path, source } = fileInfo
-  const extension = (/\.([^.]*)$/.exec(path) || [])[0]
+  const extension = (/\.([^.]*)$/.exec(path) || [])[0] as string
   let lang = extension.slice(1)
   let descriptor: SFCDescriptor
 

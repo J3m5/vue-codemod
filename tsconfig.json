@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "declaration": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "target": "ES2018",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -17,7 +17,7 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["ES2019", "DOM"],
-    "types": ["jest", "jscodeshift", "node"],
+    "types": ["jest", "jscodeshift", "node", "ast-types"],
     "rootDir": "."
   },
   "exclude": ["dist", "playground"]

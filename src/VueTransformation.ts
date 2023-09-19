@@ -1,13 +1,4 @@
-interface FileInfo {
-  /** The absolute path to the current file. */
-  path: string
-  /** The source code of the current file. */
-  source: string
-}
-
-interface Options {
-  [option: string]: any
-}
+import type { FileInfo, Options } from 'jscodeshift'
 
 export default interface VueTransformation {
   (file: FileInfo, options: Options): string | null | undefined | void
