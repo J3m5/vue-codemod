@@ -8,7 +8,9 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   const nextTickCalls = root.find(j.CallExpression, n => {
     return (
       n.callee.type === 'MemberExpression' &&
+      'name' in n.callee.property &&
       n.callee.property.name === 'nextTick' &&
+      'name' in n.callee.object &&
       n.callee.object.name === 'Vue'
     )
   })

@@ -144,7 +144,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   // <https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State>
 
   function isLikelyVueOptions(
-    comp: ASTNode | null,
+    comp: ASTNode | null | undefined,
     {
       mayBeAsyncComponent = false,
       shouldCheckProps = false

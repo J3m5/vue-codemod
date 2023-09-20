@@ -9,7 +9,11 @@ export const transformAST: ASTTransformation = context => {
   // find render function
   const renderCollections = root
     .find(j.ObjectMethod, node => {
-      return node.key.name === 'render' && node.params.length === 1
+      return (
+        'name' in node.key &&
+        node.key.name === 'render' &&
+        node.params.length === 1
+      )
     })
     .filter(
       nodePath =>
@@ -29,7 +33,11 @@ export const transformAST: ASTTransformation = context => {
     // remove render function param
     node.params = []
     const callExpressionCollection = j(node).find(j.CallExpression, node => {
-      return node.callee.name === paramName && node.arguments.length === 1
+      return (
+        'name' in node.callee &&
+        node.callee.name === paramName &&
+        node.arguments.length === 1
+      )
     })
 
     if (!callExpressionCollection.length) return

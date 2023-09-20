@@ -1,6 +1,9 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../../src/operationUtils'
-import type { VueASTTransformation } from '../../src/wrapVueTransformation'
+import type {
+  Context,
+  VueASTTransformation
+} from '../../src/wrapVueTransformation'
 import { parse, AST } from 'vue-eslint-parser'
 import wrap from '../../src/wrapVueTransformation'
 import { VuePushManualList } from '../../src/report'
@@ -13,7 +16,7 @@ export const transformAST: VueASTTransformation = context => {
 
 export default wrap(transformAST)
 
-function findNodes(context: any) {
+function findNodes(context: Context) {
   const { file } = context
   const source = file.source
   const options = { sourceType: 'module' }

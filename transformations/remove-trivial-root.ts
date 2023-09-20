@@ -1,8 +1,6 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
-import type * as N from 'jscodeshift'
-
 /**
  * It is expected to be run after the `createApp` transformataion
  * if a root component is trivial, that is, it contains only one simple prop,
@@ -12,7 +10,7 @@ import type * as N from 'jscodeshift'
  * move all other rootProps to the second argument of `createApp`
  */
 export const transformAST: ASTTransformation = ({ root, j }) => {
-  const appRoots = root.find(j.CallExpression, (node: N.CallExpression) => {
+  const appRoots = root.find(j.CallExpression, node => {
     if (
       node.arguments.length === 1 &&
       j.ObjectExpression.check(node.arguments[0])
@@ -31,6 +29,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         return true
       }
     }
+    return false
   })
   appRoots.forEach(({ node: createAppCall }) => {
     if (!j.ObjectExpression.check(createAppCall.arguments[0])) {

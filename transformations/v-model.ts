@@ -7,7 +7,10 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
   const cntFunc = getCntFunc('v-model', global.outputReport)
   // find model option
   const modelCollection = root
-    .find(j.ObjectProperty, node => node.key.name === 'model')
+    .find(
+      j.ObjectProperty,
+      node => 'name' in node.key && node.key.name === 'model'
+    )
     .filter(path => path.parent.parent.node.type == 'ExportDefaultDeclaration')
   if (!modelCollection.length) return
 

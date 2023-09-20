@@ -1,5 +1,6 @@
 import type { Transform } from 'jscodeshift'
 import runTransformation from '../runTransformation'
+import { StatementKind } from 'ast-types/gen/kinds'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')
@@ -8,7 +9,7 @@ const unreachableTransform: Transform = () => {
 const addUseStrict: Transform = (file, api, options) => {
   const j = api.jscodeshift
 
-  const hasStrictMode = body =>
+  const hasStrictMode = (body: StatementKind[]) =>
     body.some(statement =>
       j.match(statement, {
         type: 'ExpressionStatement',
@@ -18,17 +19,20 @@ const addUseStrict: Transform = (file, api, options) => {
         }
       })
     )
+  const createUseStrictExpression = () =>
+    j.expressionStatement(j.literal('use strict'))
 
-  const withComments = (to, from) => {
+  type StrictExpression = ReturnType<typeof createUseStrictExpression>
+
+  const withComments = (to: StrictExpression, from: StatementKind) => {
     to.comments = from.comments
     return to
   }
 
-  const createUseStrictExpression = () =>
-    j.expressionStatement(j.literal('use strict'))
+  const root = j(file.source).find(j.Program)
 
-  const root = j(file.source)
-  const body = root.get().value.program.body
+  const { body } = root.paths()[0].value
+
   if (!body.length || hasStrictMode(body)) {
     return null
   }

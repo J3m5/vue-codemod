@@ -19,7 +19,7 @@ export const transformAST: ASTTransformation<Params> = (
   { root, j, filename },
   { rootPropName, isGlobalApi }
 ) => {
-  const appRoots = root.find(j.CallExpression, (node: N.CallExpression) => {
+  const appRoots = root.find(j.CallExpression, node => {
     if (
       (node.arguments.length === 1 &&
         j.ObjectExpression.check(node.arguments[0])) ||
@@ -39,6 +39,7 @@ export const transformAST: ASTTransformation<Params> = (
         return true
       }
     }
+    return false
   })
 
   if (appRoots == undefined || appRoots.length == 0) {

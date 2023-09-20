@@ -34,11 +34,11 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
   importDecl.forEach(path => {
     // the default import should be left untouched to be taken care of by `remove-vue-use`
-    path.node.specifiers = path.node.specifiers.filter(s =>
+    path.node.specifiers = path.node.specifiers?.filter(s =>
       j.ImportDefaultSpecifier.check(s)
     )
 
-    if (!path.node.specifiers.length) {
+    if (!path.node.specifiers?.length) {
       path.prune()
     }
   })

@@ -210,6 +210,7 @@ function processTransformation(
         transformationModule,
         params as object
       )
+      if (!result) throw `Processed file ${fileInfo.path} failed`
 
       if (retainedSource != result) {
         fs.writeFileSync(p, result)

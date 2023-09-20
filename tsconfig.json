@@ -17,7 +17,7 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["ES2019", "DOM"],
-    "types": ["jscodeshift", "node", "ast-types", "vitest/globals"],
+    "types": ["jest", "jscodeshift", "node", "ast-types"],
     "rootDir": "."
   },
   "exclude": ["dist", "playground"]

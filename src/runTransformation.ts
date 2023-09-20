@@ -1,4 +1,5 @@
 import jscodeshift, { Transform, Parser, FileInfo } from 'jscodeshift'
+
 // @ts-ignore
 import getParser from 'jscodeshift/src/getParser'
 import createDebug from 'debug'
@@ -7,6 +8,11 @@ import { parse as parseSFC, stringify as stringifySFC } from './sfcUtils'
 import type { SFCDescriptor } from './sfcUtils'
 
 import VueTransformation from './VueTransformation'
+
+type getParserType = (
+  parserName: string,
+  options?: Record<PropertyKey, unknown>
+) => Parser
 
 const debug = createDebug('vue-codemod:run')
 
@@ -31,28 +37,29 @@ type VueTransformationModule =
 export type TransformationModule =
   | JSTransformationModule
   | VueTransformationModule
+  | Transform
+
+const getTransformation = (module: TransformationModule) => {
+  if ('default' in module) {
+    return module.default
+  } else {
+    return module
+  }
+}
 
 export default function runTransformation(
   fileInfo: FileInfo,
   transformationModule: TransformationModule,
   params: object = {}
 ) {
-  let transformation: VueTransformation | JSTransformation
-  // @ts-ignore
-  if (typeof transformationModule.default !== 'undefined') {
-    // @ts-ignore
-    transformation = transformationModule.default
-  } else {
-    // @ts-ignore
-    transformation = transformationModule
-  }
+  const transformation = getTransformation(transformationModule)
 
   const { path, source } = fileInfo
   const extension = (/\.([^.]*)$/.exec(path) || [])[0] as string
   let lang = extension.slice(1)
   let descriptor: SFCDescriptor
 
-  if (transformation.type === 'vueTransformation') {
+  if ('type' in transformation && transformation.type === 'vueTransformation') {
     if (extension === '.vue') {
       descriptor = parseSFC(source, { filename: path }).descriptor
     } else {
@@ -114,23 +121,27 @@ export default function runTransformation(
       fileInfo.source = descriptor.script.content
     }
 
-    let parser = getParser()
-    let parserOption = (transformationModule as JSTransformationModule).parser
+    // let parser = getParser()
+    let parserName =
+      'parser' in transformationModule ? transformationModule.parser : undefined
+
     // force inject `parser` option for .tsx? files, unless the module specifies a custom implementation
-    if (typeof parserOption !== 'object') {
+    if (typeof parserName !== 'object') {
       if (lang.startsWith('ts')) {
-        parserOption = lang
+        parserName = lang
       }
     }
 
-    if (parserOption) {
-      parser =
-        typeof parserOption === 'string'
-          ? getParser(parserOption)
-          : parserOption
+    if (parserName) {
+      parserName =
+        typeof parserName === 'string'
+          ? (getParser as getParserType)(parserName)
+          : parserName
+    } else {
+      return
     }
 
-    const j = jscodeshift.withParser(parser)
+    const j = jscodeshift.withParser(parserName)
     const api = {
       j,
       jscodeshift: j,
