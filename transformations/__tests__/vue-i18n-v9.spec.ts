@@ -1,4 +1,4 @@
-import { defineTest } from 'jscodeshift/src/testUtils.js'
+import { defineTest } from 'src/testUtils'
 
 defineTest(__dirname, 'vue-i18n-v9', {}, 'vue-i18n-v9/create-i18n')
 

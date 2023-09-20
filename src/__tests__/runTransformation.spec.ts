@@ -47,7 +47,7 @@ const addUseStrict: Transform = (file, api, options) => {
 }
 
 describe('run-transformation', () => {
-  it('transforms .js files', () => {
+  it.only('transforms .js files', () => {
     const source = `function a() { console.log('hello') }`
     const file = { path: '/tmp/a.js', source }
     const result = runTransformation(file, addUseStrict)

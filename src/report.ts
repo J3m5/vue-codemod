@@ -17,6 +17,8 @@ export function pushManualList(
   suggest: string,
   website: string
 ) {
+  console.log(node)
+
   let index = 0
   const filepath = path.split('.')
   if (filepath[filepath.length - 1] === 'vue') {
