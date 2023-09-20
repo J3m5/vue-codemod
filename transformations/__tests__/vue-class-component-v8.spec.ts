@@ -1,8 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../vue-class-component-v8')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../vue-class-component-v8'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `import { Component } from 'vue-class-component'`,
   `import { Options as Component } from 'vue-class-component'`,
@@ -10,7 +11,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `import { Component, Props } from 'vue-class-component'`,
   `import { Options as Component, Props } from 'vue-class-component'`,

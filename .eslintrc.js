@@ -2,11 +2,15 @@ const DOMGlobals = ['window', 'document']
 const NodeGlobals = ['module', 'require']
 
 module.exports = {
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  root: true,
   parserOptions: {
     sourceType: 'module'
   },
   rules: {
+    "@typescript-eslint/ban-ts-comment": "off",
     'no-unused-vars': [
       'error',
       // we are only using this rule to check for unused arguments since TS

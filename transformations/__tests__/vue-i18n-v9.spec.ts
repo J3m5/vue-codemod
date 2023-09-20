@@ -1,6 +1,4 @@
-jest.autoMockOff()
-
-import { defineTest } from 'jscodeshift/src/testUtils'
+import { defineTest } from 'jscodeshift/src/testUtils.js'
 
 defineTest(__dirname, 'vue-i18n-v9', {}, 'vue-i18n-v9/create-i18n')
 

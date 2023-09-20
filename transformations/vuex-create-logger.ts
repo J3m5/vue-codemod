@@ -1,6 +1,7 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { getCntFunc } from '../src/report'
+import { transformAST as addImportTransformAST } from './add-import'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('vuex-create-logger', global.outputReport)
@@ -32,8 +33,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   importDeclarationCollection.remove()
 
   //  add import
-  const addImport = require('./add-import')
-  addImport.transformAST(
+  addImportTransformAST(
+    // @ts-ignore
     { root, j },
     {
       specifier: {

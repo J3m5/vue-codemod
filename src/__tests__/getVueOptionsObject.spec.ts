@@ -1,7 +1,7 @@
 import type { Transform } from 'jscodeshift'
 import { getVueOptions } from '../astUtils'
 
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 
 const printVueOptions: Transform = function (
   file,

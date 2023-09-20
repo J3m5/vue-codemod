@@ -1,7 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../import-composition-api-from-vue')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform from '../import-composition-api-from-vue'
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import { defineComponent } from "@vue/composition-api";`,
@@ -10,6 +11,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import { defineComponent } from "@vue/composition-api";\nimport { computed } from "@vue/composition-api";`,
@@ -18,6 +20,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import * as vca from "@vue/composition-api";`,
@@ -26,6 +29,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import VueCompositionApi, { defineComponent } from "@vue/composition-api";\nimport { computed } from "@vue/composition-api";`,
@@ -34,6 +38,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import * as Vue from "vue";`,

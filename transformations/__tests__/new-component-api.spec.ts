@@ -1,10 +1,11 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../new-component-api')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../new-component-api'
 
-global.globalApi= []
+global.globalApi = []
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `import Vue from 'vue'
 import MyComponent from './MyComponent'
@@ -19,7 +20,8 @@ export default {
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `import Vue from 'vue'
 import App from './App.vue'

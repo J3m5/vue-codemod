@@ -1,6 +1,7 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { getCntFunc } from '../src/report'
+import { transformAST as transformAddImport } from './add-import'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the Vue.nextTick(...)
@@ -13,9 +14,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   })
 
   if (nextTickCalls.length) {
-    // add import nextTick
-    const addImport = require('./add-import')
-    addImport.transformAST(
+    transformAddImport(
+      // @ts-ignore
       { root, j },
       {
         specifier: {

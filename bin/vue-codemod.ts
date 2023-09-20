@@ -74,7 +74,7 @@ let logger: Console = console
 if (formatter === 'log') {
   let options = {
     flags: 'w',
-    encoding: 'utf8' // utf-8
+    encoding: 'utf8' as const // utf-8
   }
   let stdout = fs.createWriteStream('./vue_codemod.log', options)
   logger = new console.Console(stdout)

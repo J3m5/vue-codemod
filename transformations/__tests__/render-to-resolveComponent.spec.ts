@@ -1,8 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../render-to-resolveComponent')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../render-to-resolveComponent'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
   render(h){

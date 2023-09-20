@@ -1,10 +1,11 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-extraneous-import')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../remove-extraneous-import'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'Vue',
+    localBinding: 'Vue'
   },
   `import Vue from "vue";`,
   ``,
@@ -12,9 +13,10 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'createApp',
+    localBinding: 'createApp'
   },
   `import { createApp } from "vue";`,
   ``,
@@ -22,9 +24,10 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'createVueApp',
+    localBinding: 'createVueApp'
   },
   `import { createApp as createVueApp } from "vue";`,
   ``,
@@ -32,9 +35,10 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'Vue',
+    localBinding: 'Vue'
   },
   `import * as Vue from "vue";`,
   ``,
@@ -42,9 +46,10 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'style',
+    localBinding: 'style'
   },
   `import style from "./style.css";`,
   `import "./style.css";`,
@@ -52,9 +57,10 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    localBinding: 'Vue',
+    localBinding: 'Vue'
   },
   `import Vue from "vue";\nnew Vue()`,
   `import Vue from "vue";\nnew Vue()`,

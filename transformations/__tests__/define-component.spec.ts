@@ -1,14 +1,13 @@
-jest.autoMockOff()
-
 import * as fs from 'fs'
 import * as path from 'path'
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-import runTransformation from '../../src/runTransformation'
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import runTransformation from '../../src/runTransformation.js'
 
-const transform = require('../define-component')
+import transform, { parser } from '../define-component.js'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `import Vue from "vue";
 var Profile = Vue.extend({
@@ -36,9 +35,10 @@ var Profile = defineComponent({
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {
-    useCompositionApi: true,
+    useCompositionApi: true
   },
   `import Vue from "vue";
 var Profile = Vue.extend({
@@ -71,7 +71,7 @@ const runTest = (
   fixtureName: string,
   extension: string = 'vue'
 ) => {
-  test(description, () => {
+  test(description, async () => {
     const fixtureDir = path.resolve(
       __dirname,
       '../__testfixtures__',
@@ -88,13 +88,17 @@ const runTest = (
 
     const fileInfo = {
       path: inputPath,
-      source: fs.readFileSync(inputPath).toString(),
+      source: fs.readFileSync(inputPath).toString()
     }
-    const transformation = require(`../${transformationName}`)
-
-    expect(runTransformation(fileInfo, transformation)).toEqual(
-      fs.readFileSync(outputPath).toString()
+    const transformation = await import(`../${transformationName}`).then(
+      module => module.default
     )
+
+    expect(
+      runTransformation(fileInfo, transformation, {
+        printOptions: { quote: 'single' }
+      })
+    ).toEqual(fs.readFileSync(outputPath).toString())
   })
 }
 

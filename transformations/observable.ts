@@ -1,7 +1,7 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { getCntFunc } from '../src/report'
-
+import { transformAST as transformAddImport } from './add-import'
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the Vue.observable(state)
   const observableCalls = root.find(j.CallExpression, n => {
@@ -13,9 +13,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   })
 
   if (observableCalls.length) {
-    // add import reactive
-    const addImport = require('./add-import')
-    addImport.transformAST(
+    transformAddImport(
+      // @ts-ignore
       { root, j },
       {
         specifier: {

@@ -8,7 +8,7 @@ export default defineComponent({
   data() {
     return {
       greeting: "Hello"
-    };
+    }
   }
 });
 </script>

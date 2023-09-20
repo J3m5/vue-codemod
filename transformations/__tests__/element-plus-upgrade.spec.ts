@@ -1,7 +1,8 @@
 import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../element-plus-upgrade')
+import transform from '../element-plus-upgrade'
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import ElementUI from "element-ui";`,
@@ -10,6 +11,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import { MessageBox } from "element-ui";`,
@@ -18,6 +20,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import ElementUI, { MessageBox } from "element-ui";`,
@@ -26,6 +29,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `import locale from "element-ui/lib/locale/lang/zh-cn";`,

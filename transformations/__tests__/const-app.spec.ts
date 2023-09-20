@@ -1,6 +1,6 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 
-const transform = require('../const-app')
+import transform from '../const-app.js'
 
 
 defineInlineTest(

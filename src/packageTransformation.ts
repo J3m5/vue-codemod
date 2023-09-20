@@ -1,7 +1,6 @@
 import * as globby from 'globby'
 import createDebug from 'debug'
-import * as fsExtra from 'fs-extra'
-
+import { readFileSync, writeFileSync } from 'node:fs'
 const debug = createDebug('vue-codemod:rule')
 
 type AddOrUpdateConfig = {
@@ -57,16 +56,16 @@ export function transform(): boolean {
     console.warn('package.json is not exists.')
     return false
   }
-
-  let packageObj: JSON = fsExtra.readJsonSync(resolvedPaths[0])
+  const packageJSONPath = resolvedPaths[0]
+  let packageObj: JSON = JSON.parse(readFileSync(packageJSONPath, 'utf8'))
 
   if (JSON.stringify(packageObj) == JSON.stringify(process(packageObj))) {
     return false
   }
 
   packageObj = process(packageObj)
-
-  fsExtra.writeJsonSync(resolvedPaths[0], packageObj, { spaces: 2 })
+  const packageString = JSON.stringify(packageObj, null, 2)
+  writeFileSync(resolvedPaths[0], packageString)
   return true
 }
 /**

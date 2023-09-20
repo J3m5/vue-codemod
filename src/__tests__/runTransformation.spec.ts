@@ -10,14 +10,14 @@ const unreachableTransform: Transform = () => {
 const addUseStrict: Transform = (file, api, options) => {
   const j = api.jscodeshift
 
-  const hasStrictMode = (body) =>
-    body.some((statement) =>
+  const hasStrictMode = body =>
+    body.some(statement =>
       j.match(statement, {
         type: 'ExpressionStatement',
         expression: {
           type: 'Literal',
-          value: 'use strict',
-        },
+          value: 'use strict'
+        }
       })
     )
 
@@ -39,7 +39,9 @@ const addUseStrict: Transform = (file, api, options) => {
   body[0].comments = body[1].comments
   delete body[1].comments
 
-  return root.toSource(options.printOptions || { quote: 'single', lineTerminator: '\n' })
+  return root.toSource(
+    options.printOptions || { quote: 'single', lineTerminator: '\n' }
+  )
 }
 
 describe('run-transformation', () => {
@@ -112,7 +114,7 @@ export default {
 `)
   })
 
-  it('don\'t transform scriptSetup blocks in .vue files', () => {
+  it("don't transform scriptSetup blocks in .vue files", () => {
     const source = `<template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
@@ -204,7 +206,7 @@ export default {
     const result = runTransformation(
       {
         path: '/tmp/hello.vue',
-        source,
+        source
       },
       unreachableTransform
     )

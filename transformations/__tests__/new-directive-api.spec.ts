@@ -1,8 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../new-directive-api')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../new-directive-api'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `Vue.directive('my-directive', {
   bind: function onBind () {},
@@ -20,7 +21,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `Vue.directive('my-directive', {
   bind: function onBind () {},

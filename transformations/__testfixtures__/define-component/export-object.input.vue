@@ -7,9 +7,9 @@ export default {
   data() {
     return {
       greeting: "Hello"
-    };
+    }
   }
-};
+}
 </script>
 
 <style scoped>

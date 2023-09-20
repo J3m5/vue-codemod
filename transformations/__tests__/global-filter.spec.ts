@@ -1,7 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../global-filter')
+import transform from '../global-filter'
+import { defineInlineTest } from "jscodeshift/src/testUtils";
+
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `const app = Vue.createApp(App)
@@ -18,6 +20,7 @@ app.config.globalProperties.$filters = {
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `const app = Vue.createApp(App).use(store).use(router)
@@ -36,6 +39,7 @@ app.config.globalProperties.$filters = {
 )
 
 defineInlineTest(
+  // @ts-ignore
   transform,
   {},
   `const app = new Vue(App)

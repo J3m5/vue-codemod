@@ -3,6 +3,7 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import * as N from 'jscodeshift'
 import createDebug from 'debug'
+import { transformAST as addImportTransformAST } from './add-import'
 
 const debug = createDebug('vue-codemod:rule')
 type Params = {
@@ -53,12 +54,12 @@ export const transformAST: ASTTransformation<Params> = (
       return
     }
     debug('add global api in createApp')
-    const addImport = require('./add-import')
-    for (let i in global.globalApi) {
-      let api = global.globalApi[i]
+    for (const i in global.globalApi) {
+      const api = global.globalApi[i]
 
       // add import
-      addImport.transformAST(
+      addImportTransformAST(
+        // @ts-ignore
         { root, j },
         {
           specifier: {

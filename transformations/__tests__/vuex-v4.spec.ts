@@ -1,6 +1,4 @@
-jest.autoMockOff()
-
-import { defineTest } from 'jscodeshift/src/testUtils'
+import { defineTest } from 'jscodeshift/src/testUtils.js'
 
 defineTest(__dirname, 'vuex-v4', {}, 'vuex-v4/store')
 defineTest(__dirname, 'vuex-v4', {}, 'vuex-v4/vuex-dot-store')

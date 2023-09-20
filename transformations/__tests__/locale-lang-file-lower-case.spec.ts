@@ -1,9 +1,10 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 
-const transform = require('../element-plus/locale-lang-file-lower-case')
+import transform, { parser } from '../element-plus/locale-lang-file-lower-case'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `
   import locale1 from 'element-plus/lib/locale/lang/zh-CN'

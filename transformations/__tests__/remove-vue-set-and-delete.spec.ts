@@ -1,8 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-vue-set-and-delete')
+import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import transform, { parser } from '../remove-vue-set-and-delete'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `Vue.set(vm.someObject, 'b', 2);`,
   `vm.someObject['b'] = 2;`,
@@ -10,7 +11,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     methods: {
@@ -30,7 +32,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     created () {
@@ -52,7 +55,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     created () {
@@ -76,7 +80,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `value.$set('a', 1)`,
   `value.$set('a', 1)`,
@@ -84,7 +89,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `Vue.delete(vm.someObject, 'b');`,
   `delete vm.someObject['b'];`,
@@ -92,7 +98,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     methods: {
@@ -112,7 +119,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     created () {
@@ -134,7 +142,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `export default {
     created () {
@@ -158,7 +167,8 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `value.$delete('a', 1)`,
   `value.$delete('a', 1)`,
