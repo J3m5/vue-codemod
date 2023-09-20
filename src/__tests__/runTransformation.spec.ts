@@ -1,5 +1,3 @@
-// @ts-nocheck
-/* eslint-env jest */
 import type { Transform } from 'jscodeshift'
 import runTransformation from '../runTransformation'
 

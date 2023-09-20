@@ -1,7 +1,7 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../../src/operationUtils'
 import type { VueASTTransformation } from '../../src/wrapVueTransformation'
-import * as parser from 'vue-eslint-parser'
+import { parse, AST } from 'vue-eslint-parser'
 import wrap from '../../src/wrapVueTransformation'
 import { VuePushManualList } from '../../src/report'
 
@@ -17,12 +17,12 @@ function findNodes(context: any) {
   const { file } = context
   const source = file.source
   const options = { sourceType: 'module' }
-  const ast = parser.parse(source, options)
+  const ast = parse(source, options)
   const toFixNodes: Node[] = []
   const root: Node = <Node>ast.templateBody
   const key = /^key{1}/
   const number = /^\d+/
-  parser.AST.traverseNodes(root, {
+  AST.traverseNodes(root, {
     enterNode(node: Node) {
       if (
         node.type === 'VDirectiveKey' &&

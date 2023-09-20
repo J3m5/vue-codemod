@@ -10,8 +10,8 @@ import {
 } from '@vue/compiler-core'
 import * as CompilerDom from '@vue/compiler-dom'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { Statement } from '@babel/types'
 import { LRUCache } from 'lru-cache'
+import { Statement } from 'jscodeshift'
 
 const textModes = {
   DATA: 0 as const,
@@ -441,12 +441,12 @@ function createBlock(
         block.src = p.value && p.value.content
       } else if (type === 'style') {
         if (p.name === 'scoped') {
-          (block as SFCStyleBlock).scoped = true
+          ;(block as SFCStyleBlock).scoped = true
         } else if (p.name === 'module') {
-          (block as SFCStyleBlock).module = attrs[p.name]
+          ;(block as SFCStyleBlock).module = attrs[p.name]
         }
       } else if (type === 'script' && p.name === 'setup') {
-        (block as SFCScriptBlock).setup = attrs.setup
+        ;(block as SFCScriptBlock).setup = attrs.setup
       }
     }
   })

@@ -1,5 +1,3 @@
-/* eslint-env jest */
-
 describe('CLI', () => {
   it.todo('runs built-in transformation')
 
