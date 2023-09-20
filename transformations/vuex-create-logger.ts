@@ -8,6 +8,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   //  find the import xxx from 'vuex/dist/logger'
   const importDeclarationCollection = root.find(j.ImportDeclaration, node => {
     return (
+      node.specifiers !== undefined &&
       node.specifiers.length === 1 &&
       node.specifiers[0].type === 'ImportDefaultSpecifier' &&
       node.source.value === 'vuex/dist/logger'
@@ -21,7 +22,10 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     //  rename function name
     root
       .find(j.CallExpression, node => {
-        return node.callee.name === importName
+        if ('name' in node.callee) {
+          return node.callee.name === importName
+        }
+        return false
       })
       .replaceWith(({ node }) => {
         // @ts-ignore

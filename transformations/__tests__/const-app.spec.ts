@@ -1,10 +1,10 @@
 import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 
-import transform from '../const-app.js'
-
+import transform, { parser } from '../const-app.js'
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `Vue.createApp(App).use(button_counter).use(router).use(store).mount("#app");
 Vue.directive('demo', {})
@@ -18,7 +18,8 @@ app.component('myComponent',{})`,
 )
 
 defineInlineTest(
-  transform,
+  // @ts-ignore
+  { default: transform, parser },
   {},
   `const app = Vue.createApp(App).use(button_counter).use(router).use(store);
 Vue.directive('demo', {})
