@@ -27,7 +27,7 @@ function nodeFilter(node: Node): boolean {
  * @param node The Target Node
  */
 function fix(node: any): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // The current node has no attribute that is v-for
   let hasTagAttr: boolean = false

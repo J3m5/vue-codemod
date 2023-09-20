@@ -21,12 +21,12 @@ function nodeFilter(node: Node): boolean {
 
 function fix(node: Node, source: string): Operation[] {
   node = <VElement>node
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // get tag attribute and event attribute value
   // get other attribute text
   let tagValue, eventValue
-  let attrTexts: string[] = []
+  const attrTexts: string[] = []
   node.startTag.attributes.forEach(attr => {
     if (attr.type === 'VAttribute') {
       const name = attr.key.name
@@ -45,14 +45,14 @@ function fix(node: Node, source: string): Operation[] {
     // convert event attribute to new syntax
     eventValue = eventValue || ['click']
     if (typeof eventValue === 'string') {
-      if ((<String>eventValue).includes(',')) {
-        eventValue = JSON.parse((<String>eventValue).replace(/'/g, '"'))
+      if ((<string>eventValue).includes(',')) {
+        eventValue = JSON.parse((<string>eventValue).replace(/'/g, '"'))
       } else {
         eventValue = [eventValue]
       }
     }
     const event = eventValue
-      .map((value: String) => `@${value}="navigate"`)
+      .map((value: string) => `@${value}="navigate"`)
       .join(' ')
 
     // get tag attribute value and router-link text

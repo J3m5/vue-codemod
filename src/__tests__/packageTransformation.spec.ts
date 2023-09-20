@@ -1,7 +1,7 @@
 import * as pack from '../packageTransformation'
 
 describe('run-packageTransformation', () => {
-let input =
+const input =
 `{
 	"dependencies": {
 		"vue": "^2.6.10",
@@ -41,7 +41,7 @@ let input =
 	}
 }
 ` 
-let output =
+const output =
 `{
 	"dependencies": {
 		"vue": "^3.1.1",
@@ -85,7 +85,7 @@ let output =
 })
 
 describe('upgrade element-ui', () => {
-	let input =
+	const input =
 	`{
 		"dependencies": {
 			"vue": "^2.6.10",
@@ -97,7 +97,7 @@ describe('upgrade element-ui', () => {
 		}
 	}
 	` 
-	let output =
+	const output =
 	`{
 		"dependencies": {
 			"vue": "^3.1.1",

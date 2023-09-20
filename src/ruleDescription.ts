@@ -1,4 +1,4 @@
-export let ruleDescription = {
+export const ruleDescription = {
   'new-component-api': {
     description:
       'https://v3-migration.vuejs.org/breaking-changes/global-api.html#a-new-global-api-createapp'

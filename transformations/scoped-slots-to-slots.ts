@@ -13,7 +13,7 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
     }
   })
   dotScopedSlots.forEach(({ node }) => {
-    ;(node.property as N.Identifier).name = '$slots'
+    (node.property as N.Identifier).name = '$slots'
     cntFunc()
   })
 

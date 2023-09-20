@@ -28,7 +28,7 @@ function nodeFilter(node: Node): boolean {
  * @param node
  */
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   const element: any = node!.parent!.parent
   // @ts-ignore
   const scopeValue: string = OperationUtils.getText(node.value, source)

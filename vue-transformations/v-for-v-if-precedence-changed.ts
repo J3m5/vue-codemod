@@ -24,12 +24,12 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   const target: any = node!.parent
   let forValue: string = source.slice(node.range[0], node.range[1])
   let keyNode: any = false
   let ifNode: boolean = false
-  for (let findKeyNode of target?.attributes) {
+  for (const findKeyNode of target?.attributes) {
     // @ts-ignore
     if (findKeyNode?.key?.argument?.name === 'key') {
       keyNode = findKeyNode
@@ -42,7 +42,7 @@ function fix(node: Node, source: string): Operation[] {
 
   if (ifNode) {
     if (keyNode) {
-      let keyValue: string = source.slice(keyNode.range[0], keyNode.range[1])
+      const keyValue: string = source.slice(keyNode.range[0], keyNode.range[1])
       forValue += ' ' + keyValue
       fixOperations.push(OperationUtils.remove(keyNode))
     }

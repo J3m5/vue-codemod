@@ -65,14 +65,14 @@ export default function runTransformation(
       debug('skip .vue files without template block.')
       return source
     }
-    let contentStart: number =
+    const contentStart: number =
       descriptor.template.ast.children[0].loc.start.offset
-    let contentEnd: number =
+    const contentEnd: number =
       descriptor.template.ast.children[
         descriptor.template.ast.children.length - 1
       ].loc.end.offset + 1
-    let astStart = descriptor.template.ast.loc.start.offset
-    let astEnd = descriptor.template.ast.loc.end.offset + 1
+    const astStart = descriptor.template.ast.loc.start.offset
+    const astEnd = descriptor.template.ast.loc.end.offset + 1
 
     fileInfo.source = descriptor.template.ast.loc.source
 

@@ -21,7 +21,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
   if (elementPlusImport.length) {
     elementPlusImport.forEach(({ node }) => {
-      let newSpecifier: (ImportSpecifier | ImportDefaultSpecifier)[] = []
+      const newSpecifier: (ImportSpecifier | ImportDefaultSpecifier)[] = []
       node.specifiers.forEach(importNode => {
         cntFunc()
         if (importNode.type === 'ImportSpecifier') {

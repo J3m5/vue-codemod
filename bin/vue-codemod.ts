@@ -22,7 +22,7 @@ import { formatterOutput, cliInstance } from '../src/report'
 import { ruleDescription } from '../src/ruleDescription'
 
 const debug = createDebug('vue-codemod:cli')
-let processFilePath: string[] = []
+const processFilePath: string[] = []
 
 const {
   _: files,
@@ -72,11 +72,11 @@ const {
 
 let logger: Console = console
 if (formatter === 'log') {
-  let options = {
+  const options = {
     flags: 'w',
     encoding: 'utf8' as const // utf-8
   }
-  let stdout = fs.createWriteStream('./vue_codemod.log', options)
+  const stdout = fs.createWriteStream('./vue_codemod.log', options)
   logger = new console.Console(stdout)
 }
 
@@ -135,7 +135,7 @@ async function main() {
       excludedVueTransformations.length
     cliInstance.start(totalRule, 0, { process: 'Transformation begins' })
     debug(`run all transformation`)
-    for (let key in builtInTransformations) {
+    for (const key in builtInTransformations) {
       if (!excludedTransformations.includes(key)) {
         cliInstance.increment({ process: `Executing: ${key}` })
         processTransformation(resolvedPaths, key, builtInTransformations[key])
@@ -146,7 +146,7 @@ async function main() {
       }
     }
 
-    for (let key in vueTransformations) {
+    for (const key in vueTransformations) {
       if (!excludedVueTransformations.includes(key)) {
         cliInstance.increment({ process: `Executing: ${key}` })
         processTransformation(resolvedPaths, key, vueTransformations[key])
@@ -180,11 +180,11 @@ function processTransformation(
 ) {
   if (formatter === 'log')
     logger.time(`Processing use ${transformationName} transformation`)
-  let ruleProcessFile: string[] = []
+  const ruleProcessFile: string[] = []
   const extensions = ['.js', '.ts', '.vue', '.jsx', '.tsx']
   for (const p of resolvedPaths) {
     debug(`Processing ${p}…`)
-    let retainedSource: string = fs
+    const retainedSource: string = fs
       .readFileSync(p)
       .toString()
       .split('\r\n')
@@ -228,10 +228,13 @@ function processTransformation(
     if (formatter === 'log')
       logger.timeEnd(`Processing use ${transformationName} transformation`)
     if (
-      ruleDescription.hasOwnProperty(transformationName) &&
+      Object.prototype.hasOwnProperty.call(
+        ruleDescription,
+        transformationName
+      ) &&
       (formatter === 'detail' || formatter === 'log')
     ) {
-      let ruleOutput: { [key: string]: any } = {}
+      const ruleOutput: { [key: string]: unknown } = {}
       ruleOutput.rule_name = transformationName
       // @ts-ignore
       ruleOutput.website = ruleDescription[transformationName].description
@@ -251,8 +254,8 @@ main().catch(err => {
  * @returns
  */
 function loadTransformationModule(nameOrPath: string) {
-  let jsTransformation = builtInTransformations[nameOrPath]
-  let vueTransformation = vueTransformations[nameOrPath]
+  const jsTransformation = builtInTransformations[nameOrPath]
+  const vueTransformation = vueTransformations[nameOrPath]
   if (jsTransformation) {
     return jsTransformation
   }

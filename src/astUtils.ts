@@ -126,7 +126,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     return (
       returnStatements.length > 0 &&
       returnStatements.every(path =>
-        !!path.node.argument ? isPromiseExpression(path.node.argument) : true
+        path.node.argument ? isPromiseExpression(path.node.argument) : true
       )
     )
   }

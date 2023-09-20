@@ -23,7 +23,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   const target: any = node!.parent!.parent
   const targetParent: any = target.parent

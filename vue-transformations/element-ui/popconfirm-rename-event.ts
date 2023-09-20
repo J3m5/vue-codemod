@@ -31,7 +31,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: VIdentifier): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   // @ts-ignore
   fixOperations.push(OperationUtil.replaceText(node, renameMap.get(node.name)))
   return fixOperations

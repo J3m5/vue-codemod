@@ -6,7 +6,7 @@ import wrap from '../../src/wrapVueTransformation'
 import { VuePushManualList } from '../../src/report'
 
 export const transformAST: VueASTTransformation = context => {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   findNodes(context)
   return fixOperations
 }
@@ -18,10 +18,10 @@ function findNodes(context: any) {
   const source = file.source
   const options = { sourceType: 'module' }
   const ast = parser.parse(source, options)
-  let toFixNodes: Node[] = []
-  let root: Node = <Node>ast.templateBody
-  let key = /^key{1}/
-  let number = /^\d+/
+  const toFixNodes: Node[] = []
+  const root: Node = <Node>ast.templateBody
+  const key = /^key{1}/
+  const number = /^\d+/
   parser.AST.traverseNodes(root, {
     enterNode(node: Node) {
       if (

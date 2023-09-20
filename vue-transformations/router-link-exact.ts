@@ -21,7 +21,7 @@ function nodeFilter(node: Node): boolean {
 
 function fix(node: Node, source: string): Operation[] {
   node = <VElement>node
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // remove 'exact' attribute in router-link
   node.startTag.attributes.forEach(attr => {

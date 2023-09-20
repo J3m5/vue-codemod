@@ -23,7 +23,7 @@ function nodeFilter(node: Node): boolean {
  * @param node
  */
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   // @ts-ignore
   const keyNode = node.key
   const argument = keyNode.argument

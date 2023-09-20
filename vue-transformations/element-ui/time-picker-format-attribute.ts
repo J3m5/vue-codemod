@@ -35,10 +35,10 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: VAttribute): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   //  get format attribute in the time-picker
   // @ts-ignore
-  let formatValue = node.value.expression.properties.filter(
+  const formatValue = node.value.expression.properties.filter(
     // @ts-ignore
     item => item.key.name === 'format'
   )[0].value.value

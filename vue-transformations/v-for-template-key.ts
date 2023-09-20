@@ -18,7 +18,7 @@ export default wrap(transformAST)
 
 const debug = createDebug('vue-codemod:rule')
 
-let operatingParentElements: any = []
+const operatingParentElements: any = []
 
 function nodeFilter(node: Node): boolean {
   return (
@@ -35,7 +35,7 @@ function nodeFilter(node: Node): boolean {
  * @param node The Target Node
  */
 function fix(node: any): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   const target: any = node!.parent!.parent
 
   // The current node has no attribute that is v-for
@@ -103,7 +103,7 @@ function fix(node: any): Operation[] {
     return fixOperations
   }
 
-  let expression: string = getExpression(node.value)
+  const expression: string = getExpression(node.value)
 
   fixOperations.push(OperationUtils.remove(node))
   if (

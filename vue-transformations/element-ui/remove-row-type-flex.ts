@@ -26,7 +26,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: VIdentifier): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   fixOperations.push(OperationUtil.remove(node))
   // @ts-ignore
   return fixOperations

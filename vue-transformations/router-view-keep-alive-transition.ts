@@ -24,7 +24,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // find transition nodes which contain router-view node.
   // note that router-view tag may under the keep-alive tag
@@ -51,7 +51,7 @@ function fix(node: Node, source: string): Operation[] {
   if (routerView) {
     routerView = <VElement>routerView
     // get attributes text
-    let attributeText = routerView.startTag.attributes
+    const attributeText = routerView.startTag.attributes
       .map(attr => OperationUtils.getText(attr, source))
       .join(' ')
     // replace with vue-router-next syntax

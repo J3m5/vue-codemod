@@ -34,7 +34,7 @@ export function pushManualList(
     column = node?.value?.loc?.start.column
   }
   index = line + index
-  let position: string = '[' + index + ',' + column + ']'
+  const position: string = '[' + index + ',' + column + ']'
 
   const list = {
     path: path,
@@ -53,7 +53,7 @@ export function VuePushManualList(
   suggest: string,
   website: string
 ) {
-  let position: string =
+  const position: string =
     '[' + node?.loc?.start.line + ',' + node?.loc?.start.column + ']'
   const list = {
     path: path,
@@ -134,8 +134,8 @@ export function formatterOutput(
     console.log(global.outputReport)
   } else {
     let tableStr: string
-    let tableOutput: any[][] = [['Rule Names', 'Count']]
-    for (let i in global.outputReport) {
+    const tableOutput: any[][] = [['Rule Names', 'Count']]
+    for (const i in global.outputReport) {
       tableOutput.push([i, global.outputReport[i]])
     }
     tableStr = table(tableOutput, {

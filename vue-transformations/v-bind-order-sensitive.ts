@@ -24,7 +24,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   // get parent node
   const target: any = node!.parent
   // get the value of v-bind according to the range

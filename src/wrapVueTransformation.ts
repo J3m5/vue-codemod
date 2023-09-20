@@ -26,8 +26,8 @@ export function createTransformAST(
     const source = file.source
     const options = { sourceType: 'module' }
     const ast = parser.parse(source, options)
-    let toFixNodes: Node[] = []
-    let root: Node = <Node>ast.templateBody
+    const toFixNodes: Node[] = []
+    const root: Node = <Node>ast.templateBody
 
     parser.AST.traverseNodes(root, {
       enterNode(node: Node) {
@@ -90,10 +90,10 @@ export function applyOperation(
   let lastPos: number = Number.MIN_VALUE,
     output: string = bom
 
-  let applyOperations: Operation[] = []
+  const applyOperations: Operation[] = []
 
   // The Lodash grouping function is called to group the objects in the array according to range
-  let tempOperation: Operation | null = mergeOperations(tempOperations, text)
+  const tempOperation: Operation | null = mergeOperations(tempOperations, text)
   if (tempOperation) {
     applyOperations.push(tempOperation)
   }
@@ -144,7 +144,7 @@ export function applyOperation(
  */
 function mergeOperations(
   operations: Operation[],
-  sourceCode: String
+  sourceCode: string
 ): Operation | null {
   if (operations.length === 0) {
     return null

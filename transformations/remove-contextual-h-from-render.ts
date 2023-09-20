@@ -33,7 +33,7 @@ export const transformAST: ASTTransformation = context => {
     })
 
     renderFns.forEach(({ node }) => {
-      ;(node.value as ArrowFunctionExpression).params.shift()
+      (node.value as ArrowFunctionExpression).params.shift()
     })
 
     renderMethods.forEach(({ node }) => {
