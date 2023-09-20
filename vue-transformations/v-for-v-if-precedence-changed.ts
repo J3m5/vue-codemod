@@ -29,14 +29,16 @@ function fix(node: Node, source: string): Operation[] {
   let forValue: string = source.slice(node.range[0], node.range[1])
   let keyNode: any = false
   let ifNode: boolean = false
-  for (const findKeyNode of target?.attributes) {
-    // @ts-ignore
-    if (findKeyNode?.key?.argument?.name === 'key') {
-      keyNode = findKeyNode
-    }
+  if (target?.attributes.length) {
+    for (const findKeyNode of target.attributes) {
+      // @ts-ignore
+      if (findKeyNode?.key?.argument?.name === 'key') {
+        keyNode = findKeyNode
+      }
 
-    if (findKeyNode?.key?.name?.name === 'if') {
-      ifNode = true
+      if (findKeyNode?.key?.name?.name === 'if') {
+        ifNode = true
+      }
     }
   }
 

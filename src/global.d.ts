@@ -14,11 +14,11 @@ export type ManualList = {
 
 declare global {
   // Use to add global variables used by components to main.js
-  var globalApi: GlobalApi[]
-  var manualList: ManualList[]
-  var scriptLine: number
-  var outputReport: { [key: string]: number }
-  var subRules: { [key: string]: number }
+  let globalApi: GlobalApi[]
+  let manualList: ManualList[]
+  let scriptLine: number
+  let outputReport: { [key: string]: number }
+  let subRules: { [key: string]: number }
 }
 
 export {}

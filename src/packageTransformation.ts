@@ -85,7 +85,7 @@ export function process(packageObj: any): any {
       }
     })
 
-  if (packageObj?.dependencies?.hasOwnProperty('element-ui')) {
+  if (Object.hasOwnProperty.call(packageObj?.dependencies, 'element-ui')) {
     delete packageObj.dependencies['element-ui']
     packageObj.dependencies['element-plus'] = '^1.0.2-beta.55'
   }

@@ -69,7 +69,7 @@ export function getCntFunc(key: string, outputObj: { [key: string]: number }) {
   if (!outputObj) {
     outputObj = { key: 0 }
   }
-  if (!outputObj.hasOwnProperty(key)) {
+  if (!(key in outputObj)) {
     outputObj[key] = 0
   }
 
@@ -133,12 +133,11 @@ export function formatterOutput(
     console.log('The transformation stats: \n')
     console.log(global.outputReport)
   } else {
-    let tableStr: string
     const tableOutput: any[][] = [['Rule Names', 'Count']]
     for (const i in global.outputReport) {
       tableOutput.push([i, global.outputReport[i]])
     }
-    tableStr = table(tableOutput, {
+    const tableStr = table(tableOutput, {
       drawHorizontalLine: (lineIndex, rowCount) => {
         return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount
       },

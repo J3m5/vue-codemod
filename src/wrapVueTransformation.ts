@@ -35,7 +35,7 @@ export function createTransformAST(
           toFixNodes.push(node)
         }
       },
-      leaveNode(node: Node) {}
+      leaveNode() {}
     })
 
     return toFixNodes

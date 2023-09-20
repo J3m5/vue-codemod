@@ -60,7 +60,7 @@ export const transformAST: ASTTransformation = context => {
         return false
       }
 
-      const decls = j(path).getVariableDeclarators(p => obj.name)
+      const decls = j(path).getVariableDeclarators(() => obj.name)
       if (decls && decls.length === 1) {
         const declPath = decls.paths()[0]
         const declNode = declPath.node

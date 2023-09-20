@@ -34,7 +34,7 @@ function findNodes(context: any) {
         toFixNodes.push(node)
       }
     },
-    leaveNode(node: Node) {}
+    leaveNode() {}
   })
 
   toFixNodes.forEach(node => {

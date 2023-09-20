@@ -24,7 +24,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   const paths: ASTPath<VueOptionsType>[] = []
   const { j, root, filename } = context
 
-  function wrapOptionsInPaths<T>(
+  function wrapOptionsInPaths(
     nodes: VueOptionsType
   ): ASTPath<VueOptionsType>[] {
     return j(nodes).paths()

@@ -38,7 +38,7 @@ function fix(node: any): Operation[] {
         attr.key.type === 'VIdentifier' &&
         attr.key.name === 'tag'
     )
-    .forEach((element: any) => {
+    .forEach(() => {
       hasTagAttr = true
     })
   if (hasTagAttr) {

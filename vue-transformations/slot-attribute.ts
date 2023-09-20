@@ -61,7 +61,7 @@ function fix(node: Node): Operation[] {
             attr.key.type === 'VIdentifier' &&
             attr.key.name === 'slot'
         )
-        .forEach((element: any) => {
+        .forEach(() => {
           hasSlotAttr = true
         })
       if (hasSlotAttr) {
