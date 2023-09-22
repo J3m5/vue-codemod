@@ -17,25 +17,32 @@ export type ASTTransformation = {
 
 global.subRules = {}
 
-export default function astTransformationToJSCodeshiftModule(
-  transformAST: ASTTransformation
-) {
-  return (file: FileInfo, api: API, options?: Params) => {
+const parseSource = (file: FileInfo, j: JSCodeshift) => {
+  try {
+    return j(file.source)
+  } catch (err) {
+    cliInstance.stop()
+    console.error(
+      `JSCodeshift failed to parse ${file.path},` +
+        ` please check whether the syntax is valid`
+    )
+  }
+}
+
+const getTransformFile =
+  (transformAST: ASTTransformation) =>
+  (file: FileInfo, api: API, options?: Params) => {
     const j = api.jscodeshift
-    let root
-    try {
-      root = j(file.source)
-    } catch (err) {
-      cliInstance.stop()
-      console.error(
-        `JSCodeshift failed to parse ${file.path},` +
-          ` please check whether the syntax is valid`
-      )
-      return
-    }
+    const root = parseSource(file, j)
+    if (!root) return
 
     transformAST({ root, j, filename: file.path }, options)
 
     return root.toSource({ lineTerminator: '\n' })
   }
-}
+
+const astTransformationToJSCodeshiftModule = (
+  transformAST: ASTTransformation
+) => getTransformFile(transformAST)
+
+export default astTransformationToJSCodeshiftModule
