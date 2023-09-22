@@ -9,9 +9,7 @@
     "module": "nodenext",
     "allowJs": true,
     "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
+    "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "removeComments": false,
@@ -20,5 +18,5 @@
     "types": ["jest", "jscodeshift", "node", "ast-types"],
     "rootDir": "."
   },
-  "exclude": ["dist", "playground"]
+  "exclude": ["dist", "playground", "node_modules"]
 }

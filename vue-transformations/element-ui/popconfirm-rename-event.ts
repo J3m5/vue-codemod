@@ -1,4 +1,4 @@
-import { Node, VIdentifier } from 'vue-eslint-parser/ast/nodes'
+import { Node } from 'vue-eslint-parser/ast/nodes'
 import * as OperationUtil from '../../src/operationUtils'
 import type { Operation } from '../../src/operationUtils'
 import {
@@ -30,7 +30,8 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-function fix(node: VIdentifier): Operation[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function fix(node: Node, source: string): Operation[] {
   const fixOperations: Operation[] = []
   // @ts-ignore
   fixOperations.push(OperationUtil.replaceText(node, renameMap.get(node.name)))

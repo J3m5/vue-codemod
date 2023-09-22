@@ -14,7 +14,7 @@ type Params = {
 // FIXME: for ES modules, should use `createApp` instead of `Vue.createApp`
 // because the latter makes it difficult to tree-shake the vue module
 // FIXME: need to ensure there will be a Vue import if needed.
-export const transformAST: ASTTransformation<Params | void> = (
+export const transformAST: ASTTransformation = (
   context,
   params: Params = {
     includeMaybeComponents: true
@@ -132,7 +132,7 @@ export const transformAST: ASTTransformation<Params | void> = (
           name: '$mount'
         }
       },
-      arguments: (args: Array<any>) => args.length === 1
+      arguments: args => args.length === 1
     })
     $mount.forEach(({ node }) => {
       // @ts-ignore
@@ -162,7 +162,9 @@ export const transformAST: ASTTransformation<Params | void> = (
       const elIndex = rootProps.properties.findIndex(
         p =>
           j.ObjectProperty.check(p) &&
+          'key' in p &&
           j.Identifier.check(p.key) &&
+          'name' in p.key &&
           p.key.name === 'el'
       )
       const elProperty = rootProps.properties.splice(

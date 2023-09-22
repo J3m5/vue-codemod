@@ -7,16 +7,20 @@ export type Context = {
   filename: string
 }
 
-export type ASTTransformation<Params = void> = {
-  (context: Context, params: Params): void
+export type Params = {
+  [param: string]: string | boolean | number | undefined | string[] | Params
+}
+
+export type ASTTransformation = {
+  (context: Context, params?: Params): void
 }
 
 global.subRules = {}
 
-export default function astTransformationToJSCodeshiftModule<Params = any>(
-  transformAST: ASTTransformation<Params>
+export default function astTransformationToJSCodeshiftModule(
+  transformAST: ASTTransformation
 ) {
-  const transform = (file: FileInfo, api: API, options: Params) => {
+  return (file: FileInfo, api: API, options?: Params) => {
     const j = api.jscodeshift
     let root
     try {
@@ -34,6 +38,4 @@ export default function astTransformationToJSCodeshiftModule<Params = any>(
 
     return root.toSource({ lineTerminator: '\n' })
   }
-
-  return transform
 }

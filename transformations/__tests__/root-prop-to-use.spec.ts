@@ -12,7 +12,6 @@ global.globalApi.push(api1)
 global.globalApi.push(api2)
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     rootPropName: 'router'
@@ -23,7 +22,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     rootPropName: 'router'
@@ -34,7 +32,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     rootPropName: 'router'
@@ -44,7 +41,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   { rootPropName: '', isGlobalApi: true },
   `Vue.createApp();`,
@@ -55,7 +51,6 @@ Vue.createApp().use(api1).use(api2);`,
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   { rootPropName: '', isGlobalApi: true },
   `import Comp1 from "./Comp1.vue"

@@ -1,18 +1,16 @@
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation } from '../src/wrapAstTransformation'
+import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
 
 import { transformAST as addImport } from './add-import'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
-type Params = {
-  useCompositionApi: boolean
+type defineComponentParams = {
+  useCompositionApi?: boolean
 }
 
-export const transformAST: ASTTransformation<Params | undefined> = (
-  context,
-  { useCompositionApi }: Params = {
-    useCompositionApi: false
-  }
+export const transformAST: ASTTransformation = (
+  context: Context,
+  { useCompositionApi }: defineComponentParams = {}
 ) => {
   const { root, j, filename } = context
   const importDefineComponent = () =>

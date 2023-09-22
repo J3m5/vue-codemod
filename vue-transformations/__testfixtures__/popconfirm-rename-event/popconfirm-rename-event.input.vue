@@ -2,13 +2,17 @@
 <template>
   <!-- Add "scoped" attribute to limit CSS to this component only -->
 
-  <el-popconfirm  @onConfirm="del()"  @onCancel="del()" :onConfirm="tt" onCancel="tt"
-  title="Are you sure to delete this?"
->
-<template #reference>
-  <el-button>Delete</el-button>
-  </template>
-</el-popconfirm>
+  <el-popconfirm
+    @onConfirm="del()"
+    @onCancel="del()"
+    :onConfirm="tt"
+    onCancel="tt"
+    title="Are you sure to delete this?"
+  >
+    <template #reference>
+      <el-button>Delete</el-button>
+    </template>
+  </el-popconfirm>
 </template>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -16,7 +20,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+// Add "scoped" attribute to limit CSS to this component only
 
 export default {
   name: 'HelloWorld',

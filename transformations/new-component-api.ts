@@ -4,6 +4,8 @@ import { transformAST as removeExtraneousImport } from './remove-extraneous-impo
 import type { GlobalApi } from '../src/global'
 import { upperFirst, camelCase } from 'lodash'
 import { getCntFunc } from '../src/report'
+import { SpreadElement } from 'jscodeshift'
+import { ExpressionKind } from 'ast-types/gen/kinds'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context
@@ -31,7 +33,7 @@ export const transformAST: ASTTransformation = context => {
       return path.parent.parent.value.type === 'Program'
     })
 
-  let componentArgs: any[] = []
+  let componentArgs: (SpreadElement | ExpressionKind)[] = []
   componentRegistration.forEach(({ node }) => {
     if (node.arguments.length === 2) {
       componentArgs = node.arguments
@@ -39,13 +41,17 @@ export const transformAST: ASTTransformation = context => {
       cntFunc()
       if (j.Identifier.check(componentArgs[1])) {
         componentApi = { name: componentArgs[1].name, path: filename }
-      } else {
+        global.globalApi.push(componentApi)
+      } else if (
+        'value' in componentArgs[0] &&
+        typeof componentArgs[0].value === 'string'
+      ) {
         componentApi = {
           name: upperFirst(camelCase(componentArgs[0].value)),
           path: filename
         }
+        global.globalApi.push(componentApi)
       }
-      global.globalApi.push(componentApi)
     }
   })
 

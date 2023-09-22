@@ -11,17 +11,17 @@ export type Context = {
   file: FileInfo
 }
 
-export type VueASTTransformation<Params = void> = {
-  (context: Context, params: Params): Operation[]
+export type VueASTTransformation = {
+  (context: Context, params: object): Operation[]
   type?: string
 }
 
 export function createTransformAST(
   nodeFilter: (node: Node) => boolean,
-  fix: (node: Node, source?: string) => Operation[],
+  fix: (node: Node, source: string) => Operation[],
   ruleName: string
 ) {
-  function findNodes(context: any): Node[] {
+  function findNodes(context: Context): Node[] {
     const { file } = context
     const source = file.source
     const options = { sourceType: 'module' }
@@ -41,7 +41,7 @@ export function createTransformAST(
     return toFixNodes
   }
 
-  const transformAST: VueASTTransformation = context => {
+  const transformAST = (context: Context) => {
     const cntFunc = getCntFunc(ruleName, global.outputReport)
     let fixOperations: Operation[] = []
     const { file } = context
@@ -60,10 +60,10 @@ export function createTransformAST(
   return transformAST
 }
 
-export default function astTransformationToVueTransformationModule<
-  Params = any
->(transformAST: VueASTTransformation<Params>) {
-  const transform = (file: FileInfo, options: Params) => {
+export default function astTransformationToVueTransformationModule(
+  transformAST: VueASTTransformation
+) {
+  const transform = (file: FileInfo, options: object) => {
     const source = file.source
     const fixOperations: Operation[] = transformAST({ file }, options)
 

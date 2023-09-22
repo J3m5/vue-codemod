@@ -8,16 +8,12 @@
  * and the `Vue.use` statements can be just abandoned.
  */
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation } from '../src/wrapAstTransformation'
+import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
-type Params = {
-  removablePlugins: string[]
-}
-
-export const transformAST: ASTTransformation<Params> = (
-  context,
-  { removablePlugins }
+export const transformAST: ASTTransformation = (
+  context: Context,
+  params?: { removablePlugins?: string[] }
 ) => {
   const { j, root } = context
   const vueUseCalls = root.find(j.CallExpression, {
@@ -38,7 +34,11 @@ export const transformAST: ASTTransformation<Params> = (
     .filter(({ node }) => {
       if (j.Identifier.check(node.arguments[0])) {
         const plugin = node.arguments[0].name
-        if (removablePlugins?.includes(plugin)) {
+        if (
+          params &&
+          'removablePlugins' in params &&
+          params.removablePlugins?.includes(plugin)
+        ) {
           removedPlugins.push(plugin)
           return true
         }

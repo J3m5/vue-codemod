@@ -13,7 +13,6 @@
     "watch": "tsc --build --watch",
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
-    "test": "jest",
     "vitest": "vitest",
     "test:cover": "jest --coverage",
     "fix": "npm-run-all --parallel lint:fix format:fix",
@@ -65,14 +64,9 @@
     "patch-package": "^8.0.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.4"
+    "vitest": "^0.34.5"
   },
   "engines": {
     "node": ">= 18.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "vite-node@0.34.4": "patches/vite-node@0.34.4.patch"
-    }
   }
 }

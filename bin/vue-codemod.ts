@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as fs from 'fs'
 import * as path from 'path'
@@ -24,6 +25,19 @@ import { ruleDescription } from '../src/ruleDescription'
 const debug = createDebug('vue-codemod:cli')
 const processFilePath: string[] = []
 
+// type UnionToTuple<U, LastU = U> = [U] extends [never]
+//   ? []
+//   : [...UnionToTuple<Exclude<U, LastU>>, LastU]
+
+// type Last<T> = T extends any ? (args: T) => void : never
+// type ExcludeLast<U> = U extends any ? Exclude<U, ReturnType<Last<U>>> : never
+
+// type MyKeysUnion = keyof typeof ruleDescription
+// type MyKeysTuple = UnionToTuple<ExcludeLast<MyKeysUnion>, MyKeysUnion>
+
+// type ReadonlyTuple<T extends any[]> = readonly [T[number]]
+// type MyKeysReadonlyTuple = ReadonlyTuple<MyKeysTuple>
+
 const {
   _: files,
   transformation: transformationName,
@@ -36,7 +50,8 @@ const {
     alias: 't',
     type: 'string',
     conflicts: 'runAllTransformation',
-    describe: 'Name or path of the transformation module'
+    describe: 'Name or path of the transformation module',
+    choices: Object.keys(ruleDescription)
   })
   .option('params', {
     alias: 'p',
@@ -82,10 +97,7 @@ if (formatter === 'log') {
 
 // TODO: port the `Runner` interface of jscodeshift
 async function main() {
-  if (
-    (transformationName == undefined || transformationName == '') &&
-    runAllTransformation == undefined
-  ) {
+  if (!transformationName && !runAllTransformation) {
     console.log(
       'You need at least one option in command, enter vue-codemod -h to see help. '
     )
@@ -113,7 +125,7 @@ async function main() {
     (files as string[]).concat('!node_modules'),
     { gitignore: true }
   )
-  if (transformationName != undefined) {
+  if (transformationName) {
     debug(`run ${transformationName} transformation`)
     const transformationModule = loadTransformationModule(transformationName)
     processTransformation(
@@ -215,7 +227,7 @@ function processTransformation(
       if (retainedSource != result) {
         fs.writeFileSync(p, result)
         ruleProcessFile.push(p)
-        if (processFilePath.indexOf(p) == -1) {
+        if (!processFilePath.includes(p)) {
           processFilePath.push(p)
         } else {
           debug(`Skip this file ${p} because of duplicate statistics`)
@@ -235,11 +247,12 @@ function processTransformation(
       ) &&
       (formatter === 'detail' || formatter === 'log')
     ) {
-      const ruleOutput: { [key: string]: unknown } = {}
-      ruleOutput.rule_name = transformationName
-      // @ts-ignore
-      ruleOutput.website = ruleDescription[transformationName].description
-      ruleOutput.transformed_files = ruleProcessFile
+      const ruleOutput = {
+        rule_name: transformationName,
+        website: ruleDescription[transformationName].description,
+        transformed_files: ruleProcessFile
+      }
+
       if (formatter === 'log') logger.log(ruleOutput)
     }
   }

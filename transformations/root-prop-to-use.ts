@@ -1,29 +1,26 @@
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation } from '../src/wrapAstTransformation'
-
-import * as N from 'jscodeshift'
+import type { Context } from '../src/wrapAstTransformation'
 import createDebug from 'debug'
 import { transformAST as addImportTransformAST } from './add-import'
 
 const debug = createDebug('vue-codemod:rule')
-type Params = {
-  rootPropName: string
-  isGlobalApi?: boolean
-}
 
 /**
  * Expected to be run after the `createApp` transformation.
  * Transforms expressions like `createApp({ router })` to `createApp().use(router)`
  */
-export const transformAST: ASTTransformation<Params> = (
-  { root, j, filename },
-  { rootPropName, isGlobalApi }
+export const transformAST = (
+  { root, j, filename }: Context,
+  params?: {
+    rootPropName?: string
+    isGlobalApi?: boolean
+  }
 ) => {
   const appRoots = root.find(j.CallExpression, node => {
     if (
       (node.arguments.length === 1 &&
         j.ObjectExpression.check(node.arguments[0])) ||
-      isGlobalApi
+      (params && 'isGlobalApi' in params && params.isGlobalApi)
     ) {
       if (j.Identifier.check(node.callee) && node.callee.name === 'createApp') {
         return true
@@ -48,20 +45,20 @@ export const transformAST: ASTTransformation<Params> = (
   }
 
   // add global api to main.js used by component
-  if (isGlobalApi) {
+  if (params && 'isGlobalApi' in params && params.isGlobalApi) {
     debug(filename)
     if (global.globalApi == undefined || global.globalApi.length == 0) {
       debug('global api is empty')
       return
     }
+
     debug('add global api in createApp')
     for (const i in global.globalApi) {
       const api = global.globalApi[i]
 
       // add import
       addImportTransformAST(
-        // @ts-ignore
-        { root, j },
+        { root, j, filename },
         {
           specifier: {
             type: 'default',
@@ -83,25 +80,35 @@ export const transformAST: ASTTransformation<Params> = (
   }
 
   appRoots.replaceWith(({ node: createAppCall }) => {
-    const rootProps = createAppCall.arguments[0] as N.ObjectExpression
+    const rootProps = createAppCall.arguments[0]
+    if (
+      !('properties' in rootProps) ||
+      !rootProps.properties.length ||
+      !params ||
+      !('rootPropName' in params) ||
+      !params.rootPropName
+    ) {
+      return createAppCall
+    }
+
     const propertyIndex = rootProps.properties.findIndex(
-      // @ts-ignore
-      p => p.key && p.key.name === rootPropName
+      p => 'key' in p && 'name' in p.key && p.key.name === params.rootPropName
     )
 
     if (propertyIndex === -1) {
       return createAppCall
     }
 
-    // @ts-ignore
-    const [{ value: pluginInstance }] = rootProps.properties.splice(
-      propertyIndex,
-      1
-    )
+    // Remove property from root props and get its value
+    const property = rootProps.properties.splice(propertyIndex, 1)[0]
+
+    if (!('value' in property) || !j.Identifier.check(property.value)) {
+      return createAppCall
+    }
 
     return j.callExpression(
       j.memberExpression(createAppCall, j.identifier('use')),
-      [pluginInstance]
+      [property.value]
     )
   })
 }

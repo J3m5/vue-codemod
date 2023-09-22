@@ -27,11 +27,11 @@ function nodeFilter(node: Node): boolean {
  * fix logic
  * @param node
  */
-function fix(node: Node, source: string): Operation[] {
+function fix(node: Node, source?: string) {
   const fixOperations: Operation[] = []
-  const element: any = node!.parent!.parent
+  const element = node!.parent!.parent
   // @ts-ignore
-  const scopeValue: string = OperationUtils.getText(node.value, source)
+  const scopeValue = OperationUtils.getText(node.value, source)
 
   if (!!element && element.type == 'VElement' && element.name == 'template') {
     // template element replace slot-scope="xxx" to v-slot="xxx"

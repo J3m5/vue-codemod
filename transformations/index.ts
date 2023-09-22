@@ -1,9 +1,4 @@
 import type { Parser } from 'jscodeshift'
-import type ASTTransformation from 'src/wrapAstTransformation'
-type JSTransformationModule = {
-  default: ReturnType<typeof ASTTransformation>
-  parser?: string | Parser
-}
 
 import CompositionAPI, {
   parser as CompositionAPIParser
@@ -108,9 +103,15 @@ import manualRemoveConfigKeycodes, {
 import manualRemoveFilter, {
   parser as manualRemoveFilterParser
 } from './manual/manual-remove-filter'
+import wrap from '../src/wrapAstTransformation'
+
+type JSTransformationModule = {
+  default: ReturnType<typeof wrap>
+  parser?: string | Parser
+}
 
 const transformationMap: {
-  [name: string]: JSTransformationModule
+  [ruleName: string]: JSTransformationModule
 } = {
   'composition-api': { default: CompositionAPI, parser: CompositionAPIParser },
   'new-component-api': {
