@@ -33,9 +33,12 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
             )
           )
           node.specifiers = newSpecifier
-        } else {
+        } else if (
+          importNode.local &&
+          typeof importNode.local.name === 'string'
+        ) {
           newSpecifier.push(
-            j.importDefaultSpecifier(j.identifier(importNode.local!.name))
+            j.importDefaultSpecifier(j.identifier(importNode.local.name))
           )
           node.specifiers = newSpecifier
         }

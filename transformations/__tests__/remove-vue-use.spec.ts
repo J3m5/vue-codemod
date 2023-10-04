@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../remove-vue-use'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     removablePlugins: ['VueRouter']
@@ -13,7 +12,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     removablePlugins: ['VueRouter']
@@ -24,7 +22,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     removablePlugins: ['VueRouter']
@@ -35,7 +32,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `app.use(router);`,
@@ -44,7 +40,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     removablePlugins: ['VueRouter']

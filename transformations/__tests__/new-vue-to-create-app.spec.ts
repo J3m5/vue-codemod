@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../new-vue-to-create-app'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new Vue({ template: "<div>hello</div>" })`,
@@ -20,7 +19,6 @@ defineInlineTest(
 // )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new Vue({ render: h => h(App) }).$mount("#app")`,
@@ -29,7 +27,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `var vm = new Vue({ template: "<div>hello</div>" }); vm.$mount("#app")`,
@@ -38,7 +35,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new MyComponent().$mount("#app")`,
@@ -47,7 +43,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new MyComponent({ foo: "bar" }).$mount("#app")`,
@@ -56,7 +51,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   { includeMaybeComponents: false },
   `new MyComponent().$mount("#app"); vm.$mount("#app")`,
@@ -65,7 +59,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new Vue({ el: "#app", render: h => h(App) })`,
@@ -74,7 +67,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `new MyComponent({ el: "#app" })`,
@@ -83,7 +75,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `const container = new LazyContainer({ el, binding, vnode, lazy: this.lazy })`,
@@ -92,7 +83,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.prototype.$baseEventBus = new Vue()`,

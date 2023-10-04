@@ -1,7 +1,6 @@
 import type { Operation } from './operationUtils'
-// import type VueTransformation from './VueTransformation'
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as parser from 'vue-eslint-parser'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { parse, AST } from 'vue-eslint-parser'
 import { getCntFunc } from './report'
 import type { FileInfo } from 'jscodeshift'
 
@@ -21,15 +20,15 @@ export function createTransformAST(
   fix: (node: Node, source: string) => Operation[],
   ruleName: string
 ) {
-  function findNodes(context: Context): Node[] {
+  function findNodes(context: Context) {
     const { file } = context
     const source = file.source
     const options = { sourceType: 'module' }
-    const ast = parser.parse(source, options)
+    const ast = parse(source, options)
     const toFixNodes: Node[] = []
     const root: Node = <Node>ast.templateBody
 
-    parser.AST.traverseNodes(root, {
+    AST.traverseNodes(root, {
       enterNode(node: Node) {
         if (nodeFilter(node)) {
           toFixNodes.push(node)
@@ -46,7 +45,7 @@ export function createTransformAST(
     let fixOperations: Operation[] = []
     const { file } = context
     const source = file.source
-    const toFixNodes: Node[] = findNodes(context)
+    const toFixNodes = findNodes(context)
     toFixNodes.forEach(node => {
       const operations = fix(node, source)
       if (operations.length) {

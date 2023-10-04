@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../scoped-slots-to-slots'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `this.$scopedSlots

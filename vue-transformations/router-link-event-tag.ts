@@ -1,6 +1,11 @@
-import { Node, VElement } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import type { Node, VElement } from 'vue-eslint-parser/ast/nodes'
+import {
+  getText,
+  insertTextAfter,
+  remove,
+  replaceText,
+  type Operation
+} from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -35,7 +40,7 @@ function fix(node: Node, source: string): Operation[] {
       } else if (name === 'event' && attr.value?.type === 'VLiteral') {
         eventValue = attr.value.value
       } else {
-        attrTexts.push(OperationUtils.getText(attr, source))
+        attrTexts.push(getText(attr, source))
       }
     }
   })
@@ -57,18 +62,18 @@ function fix(node: Node, source: string): Operation[] {
 
     // get tag attribute value and router-link text
     tagValue = tagValue || 'a'
-    const text = OperationUtils.getText(node.children[0], source)
+    const text = getText(node.children[0], source)
 
     // convert to new syntax
     fixOperations.push(
-      OperationUtils.replaceText(
+      replaceText(
         node.startTag,
         `<router-link ${attrText} custom v-slot="{ navigate }">`
       )
     )
-    fixOperations.push(OperationUtils.remove(node.children[0]))
+    fixOperations.push(remove(node.children[0]))
     fixOperations.push(
-      OperationUtils.insertTextAfter(
+      insertTextAfter(
         node.startTag,
         `<${tagValue} ${event}>${text}</${tagValue}>`
       )

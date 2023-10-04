@@ -1,11 +1,10 @@
-import * as OperationUtils from '../src/operationUtils'
-import type { Node } from 'vue-eslint-parser/ast/nodes'
-import type { Operation } from '../src/operationUtils'
-import {
-  default as wrap,
-  createTransformAST
-} from '../src/wrapVueTransformation'
 import createDebug from 'debug'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { remove, type Operation } from '../src/operationUtils'
+import {
+  createTransformAST,
+  default as wrap
+} from '../src/wrapVueTransformation'
 
 const debug = createDebug('vue-codemod:rule')
 
@@ -49,7 +48,7 @@ function fix(node: any): Operation[] {
     return fixOperations
   }
 
-  fixOperations.push(OperationUtils.remove(node))
+  fixOperations.push(remove(node))
 
   return fixOperations
 }

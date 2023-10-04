@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --build --watch",
+    "watch": "tsc --watch --noEmit",
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
     "vitest": "vitest",
@@ -34,7 +34,7 @@
     "cli-progress": "^3.12.0",
     "debug": "^4.3.4",
     "fs-extra": "^11.1.1",
-    "globby": "^11.0.2",
+    "globby": "^11.1.0",
     "jscodeshift": "^0.15.0",
     "lodash": "^4.17.21",
     "lru-cache": "^10.0.1",
@@ -43,30 +43,36 @@
     "source-map": "^0.7.4",
     "table": "^6.8.1",
     "vue-eslint-parser": "^9.3.1",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod": "^3.22.3"
   },
   "devDependencies": {
-    "@types/cli-progress": "^3.11.2",
+    "@types/cli-progress": "^3.11.3",
     "@types/debug": "^4.1.9",
     "@types/eslint-scope": "^3.7.5",
     "@types/eslint-visitor-keys": "^1.0.0",
     "@types/fs-extra": "^11.0.2",
     "@types/jest": "^29.5.5",
     "@types/lodash": "^4.14.199",
-    "@types/node": "^18.17.17",
-    "@types/readline-sync": "^1.4.4",
-    "@types/yargs": "^17.0.24",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
-    "ast-types": "0.14.2",
+    "@types/node": "^18.18.3",
+    "@types/readline-sync": "^1.4.5",
+    "@types/yargs": "^17.0.26",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "ast-types": "0.16.1",
     "eslint": "^8.50.0",
     "npm-run-all": "^4.1.5",
     "patch-package": "^8.0.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "vitest": "^0.34.6"
   },
   "engines": {
     "node": ">= 18.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "ast-types": "0.16.1"
+    }
   }
 }

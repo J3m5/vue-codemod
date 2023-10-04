@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../new-directive-api'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.directive('my-directive', {
@@ -21,7 +20,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.directive('my-directive', {

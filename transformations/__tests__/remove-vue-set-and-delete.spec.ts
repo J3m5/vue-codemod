@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../remove-vue-set-and-delete'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.set(vm.someObject, 'b', 2);`,
@@ -11,7 +10,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -32,7 +30,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -55,7 +52,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -80,7 +76,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `value.$set('a', 1)`,
@@ -89,7 +84,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.delete(vm.someObject, 'b');`,
@@ -98,7 +92,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -119,7 +112,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -142,7 +134,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -167,7 +158,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `value.$delete('a', 1)`,

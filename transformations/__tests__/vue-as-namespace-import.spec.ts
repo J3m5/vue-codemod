@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../vue-as-namespace-import'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import Vue from "vue";`,
@@ -11,7 +10,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import Vue, { nextTick } from "vue";`,

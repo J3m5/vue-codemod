@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils'
 import transform, { parser } from '../add-emit-declaration'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -29,7 +28,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -56,7 +54,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {

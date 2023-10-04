@@ -1,11 +1,10 @@
-import * as OperationUtils from '../src/operationUtils'
-import * as util from 'util'
-import type { Node } from 'vue-eslint-parser/ast/nodes'
-import type { Operation } from '../src/operationUtils'
 import createDebug from 'debug'
+import { inspect } from 'util'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { insertTextAfter, remove, type Operation } from '../src/operationUtils'
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -105,16 +104,13 @@ function fix(node: any): Operation[] {
 
   const expression: string = getExpression(node.value)
 
-  fixOperations.push(OperationUtils.remove(node))
+  fixOperations.push(remove(node))
   if (
     !elderHasKey &&
-    util.inspect(operatingParentElements).indexOf(util.inspect(elder.range)) ==
-      -1
+    inspect(operatingParentElements).indexOf(inspect(elder.range)) == -1
   ) {
     operatingParentElements.push(elder.range)
-    fixOperations.push(
-      OperationUtils.insertTextAfter(elder, ' :key=' + expression)
-    )
+    fixOperations.push(insertTextAfter(elder, ' :key=' + expression))
   }
   return fixOperations
 }

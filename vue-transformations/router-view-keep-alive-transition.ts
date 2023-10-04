@@ -1,6 +1,11 @@
 import { Node, VElement } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import {
+  getText,
+  insertTextAfter,
+  insertTextBefore,
+  replaceText,
+  type Operation
+} from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -52,19 +57,17 @@ function fix(node: Node, source: string): Operation[] {
     routerView = <VElement>routerView
     // get attributes text
     const attributeText = routerView.startTag.attributes
-      .map(attr => OperationUtils.getText(attr, source))
+      .map(attr => getText(attr, source))
       .join(' ')
     // replace with vue-router-next syntax
+    fixOperations.push(replaceText(routerView, '<component :is="Component" />'))
     fixOperations.push(
-      OperationUtils.replaceText(routerView, '<component :is="Component" />')
-    )
-    fixOperations.push(
-      OperationUtils.insertTextBefore(
+      insertTextBefore(
         node,
         `<router-view ${attributeText} v-slot="{ Component }">`
       )
     )
-    fixOperations.push(OperationUtils.insertTextAfter(node, '</router-view>'))
+    fixOperations.push(insertTextAfter(node, '</router-view>'))
   }
 
   return fixOperations

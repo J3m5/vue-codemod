@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../remove-trivial-root'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `createApp({ render: () => h(App) });`,
@@ -11,7 +10,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.createApp({ render: () => h(App) });`,
@@ -20,7 +18,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `createApp({ render() { return h(App) } });`,
@@ -29,7 +26,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `createApp({ render: () => { return h(App) } });`,
@@ -38,7 +34,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `createApp({ render: () => h(App), data() { return { a: 1 } } });`,

@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../remove-extraneous-import'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'Vue'
@@ -13,7 +12,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'createApp'
@@ -24,7 +22,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'createVueApp'
@@ -35,7 +32,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'Vue'
@@ -46,7 +42,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'style'
@@ -57,7 +52,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     localBinding: 'Vue'

@@ -1,5 +1,10 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
+import {
+  replaceText,
+  remove,
+  insertTextBefore,
+  insertTextAfter
+} from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
 import {
   default as wrap,
@@ -21,7 +26,6 @@ function nodeFilter(node: Node): boolean {
 
 /**
  * fix logic
- * @param node
  */
 function fix(node: Node): Operation[] {
   const fixOperations: Operation[] = []
@@ -36,10 +40,10 @@ function fix(node: Node): Operation[] {
     element.name == 'template'
   ) {
     // template element replace slot="xxx" to v-slot:xxx
-    fixOperations.push(OperationUtils.replaceText(node, `v-slot:${slotValue}`))
+    fixOperations.push(replaceText(node, `v-slot:${slotValue}`))
   } else {
     // remove v-slot:${slotValue}
-    fixOperations.push(OperationUtils.remove(node))
+    fixOperations.push(remove(node))
     // add <template v-slot:${slotValue}>
 
     let elder: any = null
@@ -71,13 +75,10 @@ function fix(node: Node): Operation[] {
 
     if (!hasSlotAttr) {
       fixOperations.push(
-        OperationUtils.insertTextBefore(
-          element,
-          `<template v-slot:${slotValue}>`
-        )
+        insertTextBefore(element, `<template v-slot:${slotValue}>`)
       )
       // add </template>
-      fixOperations.push(OperationUtils.insertTextAfter(element, `</template>`))
+      fixOperations.push(insertTextAfter(element, `</template>`))
     }
   }
 

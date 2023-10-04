@@ -1,6 +1,5 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { replaceText, type Operation, getText } from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -29,13 +28,15 @@ function nodeFilter(node: Node): boolean {
  */
 function fix(node: Node, source?: string) {
   const fixOperations: Operation[] = []
-  const element = node!.parent!.parent
-  // @ts-ignore
-  const scopeValue = OperationUtils.getText(node.value, source)
+  if (!('value' in node) || !node.value || !('directive' in node) || !source) {
+    return fixOperations
+  }
+  const element = node.parent.parent
+  const scopeValue = getText(node.value, source)
 
   if (!!element && element.type == 'VElement' && element.name == 'template') {
     // template element replace slot-scope="xxx" to v-slot="xxx"
-    fixOperations.push(OperationUtils.replaceText(node, `v-slot=${scopeValue}`))
+    fixOperations.push(replaceText(node, `v-slot=${scopeValue}`))
   }
 
   return fixOperations

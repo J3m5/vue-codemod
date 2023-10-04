@@ -1,4 +1,4 @@
-import * as pack from '../packageTransformation'
+import { process } from '../packageTransformation'
 
 describe('run-packageTransformation', () => {
   const input = `{
@@ -78,7 +78,7 @@ describe('run-packageTransformation', () => {
 }
 `
   it('insertTextAfter code to equal object', () => {
-    expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
+    expect(process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
   })
 })
 
@@ -105,6 +105,6 @@ describe('upgrade element-ui', () => {
 	}
 	`
   it('upgread element-ui to element-plus', () => {
-    expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
+    expect(process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
   })
 })

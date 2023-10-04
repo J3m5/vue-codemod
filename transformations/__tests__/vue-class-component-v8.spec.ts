@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../vue-class-component-v8'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import { Component } from 'vue-class-component'`,
@@ -11,7 +10,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import { Component, Props } from 'vue-class-component'`,

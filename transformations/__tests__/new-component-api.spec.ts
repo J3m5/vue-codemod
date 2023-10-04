@@ -4,7 +4,6 @@ import transform, { parser } from '../new-component-api'
 global.globalApi = []
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import Vue from 'vue'
@@ -20,7 +19,6 @@ export default {
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import Vue from 'vue'

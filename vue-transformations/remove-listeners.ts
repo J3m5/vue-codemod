@@ -1,6 +1,6 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import { z } from 'zod'
+import { remove, type Operation } from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -14,19 +14,30 @@ export const transformAST = createTransformAST(
 
 export default wrap(transformAST)
 
+const nodeSchema = z.object({
+  type: z.literal('VAttribute'),
+  key: z.object({
+    type: z.literal('VDirectiveKey'),
+    name: z.object({
+      name: z.literal('on')
+    })
+  }),
+  value: z.object({
+    type: z.literal('VExpressionContainer'),
+    expression: z.object({
+      type: z.literal('Identifier'),
+      name: z.literal('$listeners')
+    })
+  })
+})
+
 function nodeFilter(node: Node): boolean {
-  return (
-    node.type === 'VAttribute' &&
-    node.key.type === 'VDirectiveKey' &&
-    node.key.name.name === 'on' &&
-    node.value?.type === 'VExpressionContainer' &&
-    node.value.expression?.type === 'Identifier' &&
-    node.value.expression.name === '$listeners'
-  )
+  const result = nodeSchema.safeParse(node)
+  return result.success
 }
 
-function fix(node: Node): Operation[] {
+function fix(node: Node) {
   const fixOperations: Operation[] = []
-  fixOperations.push(OperationUtils.remove(node))
+  fixOperations.push(remove(node))
   return fixOperations
 }

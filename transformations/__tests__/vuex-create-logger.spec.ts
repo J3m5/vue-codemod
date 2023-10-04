@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../vuex-create-logger'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import createLogger from 'vuex/dist/logger'
@@ -17,7 +16,6 @@ const store = new Vuex.Store({
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import logger from 'vuex/dist/logger'

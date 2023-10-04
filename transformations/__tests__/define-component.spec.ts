@@ -6,7 +6,6 @@ import runTransformation from '../../src/runTransformation.js'
 import transform, { parser } from '../define-component.js'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `import Vue from "vue";
@@ -35,7 +34,6 @@ var Profile = defineComponent({
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {
     useCompositionApi: true

@@ -1,6 +1,10 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+
+import {
+  insertTextBefore,
+  removeRange,
+  type Operation
+} from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -55,15 +59,11 @@ function fix(node: Node): Operation[] {
           }
         }
         // insert a comment about navite modifier
-        fixOperations.push(OperationUtils.insertTextBefore(vStartTag, comment))
+        fixOperations.push(insertTextBefore(vStartTag, comment))
         // insert new line and indents
-        fixOperations.push(
-          OperationUtils.insertTextBefore(vStartTag, insertIndent)
-        )
+        fixOperations.push(insertTextBefore(vStartTag, insertIndent))
         // remove native modifier on 'v-on' directive
-        fixOperations.push(
-          OperationUtils.removeRange([mod.range[0] - 1, mod.range[1]])
-        )
+        fixOperations.push(removeRange([mod.range[0] - 1, mod.range[1]]))
       }
     })
   }

@@ -1,20 +1,33 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "declaration": true,
-    "sourceMap": true,
-    "target": "ES2018",
-    "moduleResolution": "nodenext",
-    "module": "nodenext",
-    "allowJs": true,
-    "noUnusedLocals": true,
-    "strict": true,
-    "resolveJsonModule": true,
+    /* Base Options: */
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    // "verbatimModuleSyntax": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+
+    /* Strictness */
+    "strict": true,
+
+    // "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+  
+    /* If transpiling with TypeScript: */
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+
+    /* If your code doesn't run in the DOM: */
+    "lib": ["es2022"],
+
+    /* If you're building for a library: */
+    "declaration": true,
     "removeComments": false,
-    "jsx": "preserve",
-    "lib": ["ES2019", "DOM"],
+
     "types": ["jest", "jscodeshift", "node", "ast-types"],
     "rootDir": "."
   },

@@ -2,7 +2,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../render-to-resolveComponent'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {

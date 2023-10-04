@@ -24,7 +24,9 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
   readyExpresstion.replaceWith(({ node }) => {
     const express = node.callee
     const params = node.arguments
-    //@ts-ignore
+
+    if (!('property' in express) || !('name' in express.property)) return node
+
     express.property.name = 'isReady'
     const successFn = j.callExpression(
       j.memberExpression(j.callExpression(express, []), j.identifier('then')),

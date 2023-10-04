@@ -7,7 +7,6 @@ import treeShaking, { parser as nextTreeShaking } from '../tree-shaking'
 
 // Vue.nextTick() => nextTick()
 defineInlineTest(
-  // @ts-ignore
   { default: nextTick, parser: nextTickParser },
   {},
   `import Vue from 'vue'
@@ -25,7 +24,6 @@ nextTick(() => {
 
 // Vue.observable() => reactive()
 defineInlineTest(
-  // @ts-ignore
   { default: observable, parser: nextObservable },
   {},
   `import Vue from 'vue'
@@ -37,7 +35,6 @@ const state = reactive({ count: 0 })`,
 
 // Vue.version() => version()
 defineInlineTest(
-  // @ts-ignore
   { default: version, parser: nextTickVersion },
   {},
   `import Vue from 'vue'
@@ -48,7 +45,6 @@ var version = Number(version.split('.')[0])`,
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: treeShaking, parser: nextTreeShaking },
   {},
   `import Vue from 'vue'

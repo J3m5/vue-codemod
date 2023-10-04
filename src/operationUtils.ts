@@ -143,3 +143,17 @@ export function getText(node: Node, source: string): string {
   const end = node?.range[1]
   return source.slice(start, end)
 }
+
+export const getFixOperations = (
+  node: Node,
+  renameMap: Map<string, string>
+) => {
+  const fixOperations = []
+  if ('name' in node && typeof node.name === 'string') {
+    const name = renameMap.get(node.name)
+    if (name) {
+      fixOperations.push(replaceText(node, name))
+    }
+  }
+  return fixOperations
+}

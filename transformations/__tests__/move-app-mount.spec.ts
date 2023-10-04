@@ -3,7 +3,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../move-app-mount'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `app.directive('demo', {})
@@ -30,7 +29,6 @@ app.mount("#app");`,
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `Vue.directive('demo', {})

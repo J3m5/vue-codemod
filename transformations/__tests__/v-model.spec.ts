@@ -3,7 +3,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../v-model'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -44,7 +43,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {
@@ -74,7 +72,6 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `export default {

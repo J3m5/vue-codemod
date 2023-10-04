@@ -1,4 +1,4 @@
-import type wrap from 'src/wrapVueTransformation'
+import type wrap from '../src/wrapVueTransformation'
 import slotAttribute from './slot-attribute'
 import slotDefault from './slot-default'
 import slotScopeAttribute from './slot-scope-attribute'

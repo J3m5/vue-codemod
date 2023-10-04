@@ -3,7 +3,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import renameLifeCycle, { parser } from '../rename-lifecycle'
 
 defineInlineTest(
-  // @ts-ignore
   { default: renameLifeCycle, parser },
   {},
   `export default {

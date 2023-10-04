@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as fs from 'fs'
-import * as path from 'path'
+import {
+  createWriteStream,
+  existsSync,
+  readFileSync,
+  writeFileSync
+} from 'node:fs'
+import { resolve } from 'node:path'
 import Module from 'module'
 
 import * as yargs from 'yargs'
@@ -91,7 +96,7 @@ if (formatter === 'log') {
     flags: 'w',
     encoding: 'utf8' as const // utf-8
   }
-  const stdout = fs.createWriteStream('./vue_codemod.log', options)
+  const stdout = createWriteStream('./vue_codemod.log', options)
   logger = new console.Console(stdout)
 }
 
@@ -196,8 +201,7 @@ function processTransformation(
   const extensions = ['.js', '.ts', '.vue', '.jsx', '.tsx']
   for (const p of resolvedPaths) {
     debug(`Processing ${p}…`)
-    const retainedSource: string = fs
-      .readFileSync(p)
+    const retainedSource: string = readFileSync(p)
       .toString()
       .split('\r\n')
       .join('\n')
@@ -225,7 +229,7 @@ function processTransformation(
       if (!result) throw `Processed file ${fileInfo.path} failed`
 
       if (retainedSource != result) {
-        fs.writeFileSync(p, result)
+        writeFileSync(p, result)
         ruleProcessFile.push(p)
         if (!processFilePath.includes(p)) {
           processFilePath.push(p)
@@ -277,10 +281,10 @@ function loadTransformationModule(nameOrPath: string) {
     return vueTransformation
   }
 
-  const customModulePath = path.resolve(process.cwd(), nameOrPath)
-  if (fs.existsSync(customModulePath)) {
+  const customModulePath = resolve(process.cwd(), nameOrPath)
+  if (existsSync(customModulePath)) {
     const requireFunc = Module.createRequire(
-      path.resolve(process.cwd(), './package.json')
+      resolve(process.cwd(), './package.json')
     )
     // TODO: interop with ES module
     // TODO: fix absolute path

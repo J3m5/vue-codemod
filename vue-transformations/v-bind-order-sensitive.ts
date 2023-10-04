@@ -1,9 +1,13 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import {
-  default as wrap,
-  createTransformAST
+  insertTextBefore,
+  remove,
+  removeRange,
+  type Operation
+} from '../src/operationUtils'
+import {
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -32,16 +36,12 @@ function fix(node: Node, source: string) {
   // remove node
   if (target && 'attributes' in target) {
     if (target.attributes[target.attributes.length - 1] === node) {
-      fixOperations.push(OperationUtils.remove(node))
+      fixOperations.push(remove(node))
     } else {
-      fixOperations.push(
-        OperationUtils.removeRange([node.range[0], node.range[1] + 1])
-      )
+      fixOperations.push(removeRange([node.range[0], node.range[1] + 1]))
     }
     // add node to the first
-    fixOperations.push(
-      OperationUtils.insertTextBefore(target.attributes[0], bindValue)
-    )
+    fixOperations.push(insertTextBefore(target.attributes[0], bindValue))
   }
   return fixOperations
 }

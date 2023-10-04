@@ -1,6 +1,5 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtil from '../../src/operationUtils'
-import type { Operation } from '../../src/operationUtils'
+import { getFixOperations } from '../../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -30,10 +29,6 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function fix(node: Node, source: string): Operation[] {
-  const fixOperations: Operation[] = []
-  // @ts-ignore
-  fixOperations.push(OperationUtil.replaceText(node, renameMap.get(node.name)))
-  return fixOperations
+function fix(node: Node) {
+  return getFixOperations(node, renameMap)
 }

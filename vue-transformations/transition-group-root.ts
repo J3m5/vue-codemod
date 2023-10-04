@@ -1,6 +1,5 @@
-import * as OperationUtils from '../src/operationUtils'
 import type { Node } from 'vue-eslint-parser/ast/nodes'
-import type { Operation } from '../src/operationUtils'
+import { insertTextAt, type Operation } from '../src/operationUtils'
 import createDebug from 'debug'
 import {
   default as wrap,
@@ -46,8 +45,6 @@ function fix(node: any): Operation[] {
     return fixOperations
   }
 
-  fixOperations.push(
-    OperationUtils.insertTextAt(node.startTag.range[1] - 1, ' tag="span"')
-  )
+  fixOperations.push(insertTextAt(node.startTag.range[1] - 1, ' tag="span"'))
   return fixOperations
 }

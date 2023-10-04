@@ -15,35 +15,51 @@ export default wrap(transformAST)
 
 function nodeFilter(node: Node): boolean {
   const pre = (item: VAttribute | VDirective) =>
-    // @ts-ignore
-    item.key.name === 'bind' && item.key.argument?.name === 'format'
+    item.key.name === 'bind' &&
+    'argument' in item.key &&
+    !!item.key.argument &&
+    'name' in item.key.argument &&
+    item.key.argument.name === 'format'
   return (
     node.type === 'VAttribute' &&
     node.key.type === 'VDirectiveKey' &&
-    node.key.name?.name === 'bind' &&
-    // @ts-ignore
-    node.key.argument?.name === 'picker-options' &&
+    node.key.name.name === 'bind' &&
+    'argument' in node.key &&
+    !!node.key.argument &&
+    'name' in node.key.argument &&
+    node.key.argument.name === 'picker-options' &&
     node.value?.type === 'VExpressionContainer' &&
     node.value.expression?.type === 'ObjectExpression' &&
-    // @ts-ignore
-    node.value.expression.properties?.filter(item => item.key.name === 'format')
-      .length > 0 &&
-    node.parent?.parent.type === 'VElement' &&
-    node.parent.parent?.name === 'el-time-picker' &&
+    node.value.expression.properties?.filter(
+      item => 'key' in item && 'name' in item.key && item.key.name === 'format'
+    ).length > 0 &&
+    node.parent.parent.type === 'VElement' &&
+    node.parent.parent.name === 'el-time-picker' &&
     node.parent.attributes?.filter(attribute => pre(attribute)).length === 0
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function fix(node: Node, source: string): Operation[] {
+function fix(node: Node): Operation[] {
   const fixOperations: Operation[] = []
   //  get format attribute in the time-picker
-  // @ts-ignore
-  const formatValue = node.value.expression.properties.filter(
-    // @ts-ignore
-    item => item.key.name === 'format'
-  )[0].value.value
-  //  add format attribute to el-time-picker tag
-  fixOperations.push(insertTextBefore(node, `format='${formatValue}' `))
+  if (
+    'value' in node &&
+    typeof node.value === 'object' &&
+    !!node.value &&
+    'expression' in node.value &&
+    !!node.value.expression &&
+    'properties' in node.value.expression
+  ) {
+    const formatNode = node.value.expression.properties.filter(
+      item => 'key' in item && 'name' in item.key && item.key.name === 'format'
+    )[0]
+
+    if ('value' in formatNode && 'value' in formatNode.value) {
+      //  add format attribute to el-time-picker tag
+      fixOperations.push(
+        insertTextBefore(node, `format='${formatNode.value.value}' `)
+      )
+    }
+  }
   return fixOperations
 }

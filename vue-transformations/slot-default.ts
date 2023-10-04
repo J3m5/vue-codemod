@@ -1,6 +1,5 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import { remove, type Operation } from '../src/operationUtils'
 import {
   default as wrap,
   createTransformAST
@@ -31,7 +30,7 @@ function fix(node: Node): Operation[] {
   targetParent.children
     .filter((el: any) => el.type == 'VElement' && el.name != 'template')
     .forEach((element: any) => {
-      fixOperations.push(OperationUtils.remove(element))
+      fixOperations.push(remove(element))
     })
   return fixOperations
 }

@@ -3,7 +3,6 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import transform, { parser } from '../element-plus/locale-lang-file-lower-case'
 
 defineInlineTest(
-  // @ts-ignore
   { default: transform, parser },
   {},
   `

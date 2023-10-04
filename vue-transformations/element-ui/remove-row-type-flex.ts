@@ -1,9 +1,8 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtil from '../../src/operationUtils'
-import type { Operation } from '../../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { remove, type Operation } from '../../src/operationUtils'
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -25,10 +24,8 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function fix(node: Node, source: string): Operation[] {
+function fix(node: Node): Operation[] {
   const fixOperations: Operation[] = []
-  fixOperations.push(OperationUtil.remove(node))
-  // @ts-ignore
+  fixOperations.push(remove(node))
   return fixOperations
 }
