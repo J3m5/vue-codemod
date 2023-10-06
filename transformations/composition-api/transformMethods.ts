@@ -1,8 +1,13 @@
+import j from 'jscodeshift'
+
 import { get, getFunctionBuilderParams, isFunction } from './utils'
 
 import type { TransformParams } from './utils'
 
-export const transformMethods = ({ defaultExport, j }: TransformParams) => {
+export const transformMethods = ({
+  defaultExport,
+  collector
+}: TransformParams) => {
   // Find the methods of the default export object
   const methodsCollection = defaultExport
     .find(j.ObjectProperty, {
@@ -16,7 +21,7 @@ export const transformMethods = ({ defaultExport, j }: TransformParams) => {
 
   const methodNodes = functionNodes.map(methodProp => {
     const methodBuilderParams = getFunctionBuilderParams(methodProp)
-
+    collector.methods.push(methodProp.key.name)
     return j.variableDeclaration('const', [
       j.variableDeclarator(
         j.identifier(methodProp.key.name),

@@ -1,19 +1,25 @@
 import { get, getFunctionBuilderParams, isFunction } from './utils'
 import type { TransformParams } from './utils'
+import j from 'jscodeshift'
 
-export const transformComputed = ({ defaultExport, j }: TransformParams) => {
+export const transformComputed = ({
+  defaultExport,
+  collector
+}: TransformParams) => {
   // Find the methods of the default export object
   const computedCollection = defaultExport
     .find(j.ObjectProperty, {
       key: { name: 'computed' }
     })
     .find(j.ObjectExpression)
+    .filter(path => path.parent.value.key.name === 'computed')
 
   if (!computedCollection.length) return
 
   const functionNodes = get(computedCollection).properties.filter(isFunction)
 
   const computedNodes = functionNodes.map(computed => {
+    collector.refs.push(computed.key.name)
     const computedBuilderParams = getFunctionBuilderParams(computed)
 
     return j.variableDeclaration('const', [

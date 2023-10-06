@@ -30,19 +30,6 @@ import { ruleDescription } from '../src/ruleDescription'
 const debug = createDebug('vue-codemod:cli')
 const processFilePath: string[] = []
 
-// type UnionToTuple<U, LastU = U> = [U] extends [never]
-//   ? []
-//   : [...UnionToTuple<Exclude<U, LastU>>, LastU]
-
-// type Last<T> = T extends any ? (args: T) => void : never
-// type ExcludeLast<U> = U extends any ? Exclude<U, ReturnType<Last<U>>> : never
-
-// type MyKeysUnion = keyof typeof ruleDescription
-// type MyKeysTuple = UnionToTuple<ExcludeLast<MyKeysUnion>, MyKeysUnion>
-
-// type ReadonlyTuple<T extends any[]> = readonly [T[number]]
-// type MyKeysReadonlyTuple = ReadonlyTuple<MyKeysTuple>
-
 const {
   _: files,
   transformation: transformationName,

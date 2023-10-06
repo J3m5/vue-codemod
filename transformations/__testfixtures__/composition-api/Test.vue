@@ -8,8 +8,8 @@ export default {
   props: {
     title: {
       required: true,
-      type: Object,
-    },
+      type: String
+    }
   },
   data: () => ({
     subtitle: 'test',
@@ -19,27 +19,44 @@ export default {
     nu: null,
     loading: true,
     obj: { a: 1 },
-    arr: [1],
+    arr: [1]
   }),
   methods: {
     async start() {
       this.loading = false
     },
-    finish: async (vm) => {
-      vm.loading = false
+    finish: async bool => {
+      this.loading = bool
     },
     restart: async function () {
       this.loading = false
-    },
+      return this.computeVM0
+    }
   },
   computed: {
-    compute: (vm) => vm.num + 1,
-    recompute() {
+    computeVM0: vm => vm.num + 1,
+    computeVM1: vm => {
+      vm.num + 1
+      vm.title = 'title'
+    },
+    computeVM2(vm) {
+      vm.num + 2
+      vm.title = 'title'
+    },
+    computeVM3: function (vm) {
+      vm.num + 3
+      vm.title = 'title'
+    },
+    computeThis1() {
       this.num + 2
+      this.title = 'title'
+      return this.computeVM3
     },
-    computeAgain: function () {
+    computeThis2: function () {
       this.num + 3
-    },
-  },
+      this.title = 'title'
+      this.finish(true)
+    }
+  }
 }
 </script>

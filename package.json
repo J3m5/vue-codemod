@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch --noEmit",
+    "build-watch": "tsc --watch",
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
     "vitest": "vitest",
@@ -44,7 +45,7 @@
     "table": "^6.8.1",
     "vue-eslint-parser": "^9.3.1",
     "yargs": "^17.7.2",
-    "zod": "^3.22.3"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.11.3",

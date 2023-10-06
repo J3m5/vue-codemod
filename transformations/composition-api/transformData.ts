@@ -1,8 +1,9 @@
 import type { ASTPath, JSCodeshift, ObjectProperty } from 'jscodeshift'
 import { isKeyIdentifier } from './utils'
-import type { TransformParams } from './utils'
+import type { ExportDefaultCollection, TransformParams } from './utils'
+import j from 'jscodeshift'
 
-const getRefValue = ({ node, j }: { node: ObjectProperty; j: JSCodeshift }) => {
+const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
   const { value } = node
 
   // Get literal node
@@ -32,7 +33,7 @@ const filterData = (dataPropertyPath: ASTPath<ObjectProperty>) => {
   return false
 }
 
-const getDataCollection = ({ defaultExport, j }: TransformParams) => {
+const getDataCollection = (defaultExport: ExportDefaultCollection) => {
   const dataCollection = defaultExport
     .find(j.ObjectProperty, {
       key: { name: 'data' }
@@ -52,8 +53,11 @@ const getDataCollection = ({ defaultExport, j }: TransformParams) => {
   return undefined
 }
 
-export const transformData = ({ defaultExport, j }: TransformParams) => {
-  const dataCollection = getDataCollection({ defaultExport, j })
+export const transformData = ({
+  defaultExport,
+  collector
+}: TransformParams) => {
+  const dataCollection = getDataCollection(defaultExport)
   if (!dataCollection) return
 
   const functionNodes = dataCollection.nodes().filter(isKeyIdentifier)
@@ -62,7 +66,7 @@ export const transformData = ({ defaultExport, j }: TransformParams) => {
     const refValue = getRefValue({ node: dataProp, j })
 
     if (!refValue) return []
-
+    collector.refs.push(dataProp.key.name)
     return j.variableDeclaration('const', [
       j.variableDeclarator(
         j.identifier(dataProp.key.name),

@@ -1,4 +1,9 @@
-import j, { Collection, ObjectProperty } from 'jscodeshift'
+import j, {
+  ArrayExpression,
+  Collection,
+  ObjectExpression,
+  ObjectProperty
+} from 'jscodeshift'
 import type { TransformParams } from './utils'
 import { get } from './utils'
 
@@ -13,7 +18,31 @@ const getProps = (collection: Collection<ObjectProperty>) => {
   return undefined
 }
 
-export const transformProps = ({ defaultExport, j }: TransformParams) => {
+const getPropsNames = (props: ArrayExpression | ObjectExpression) => {
+  if (j.ArrayExpression.check(props)) {
+    return props.elements.flatMap(element => {
+      if (j.Literal.check(element) && typeof element.value === 'string') {
+        return element.value
+      }
+      return []
+    })
+  }
+  return props.properties.flatMap(property => {
+    if (
+      j.ObjectProperty.check(property) &&
+      j.Identifier.check(property.key) &&
+      typeof property.key.name === 'string'
+    ) {
+      return property.key.name
+    }
+    return []
+  })
+}
+
+export const transformProps = ({
+  defaultExport,
+  collector
+}: TransformParams) => {
   const propsCollection = defaultExport.find(j.ObjectProperty, {
     key: { name: 'props' }
   })
@@ -21,7 +50,8 @@ export const transformProps = ({ defaultExport, j }: TransformParams) => {
   const props = getProps(propsCollection)
 
   if (!props) return
-
+  const propsNames = getPropsNames(props)
+  collector.props.push(...propsNames)
   const propsDefinition = j.variableDeclaration('const', [
     j.variableDeclarator(
       j.identifier('props'),
