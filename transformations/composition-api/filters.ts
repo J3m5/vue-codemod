@@ -1,27 +1,24 @@
 import j from 'jscodeshift'
-
 import {
+  TransformParams,
   findObjectProperty,
   get,
   getFunctionBuilderParams,
   isFunction
 } from './utils'
 
-import type { TransformParams } from './utils'
-
-export const transformMethods = ({
+export const transformFilters = ({
   defaultExport,
   collector
 }: TransformParams) => {
-  // Find the methods of the default export object
-  const methodsCollection = findObjectProperty(defaultExport, 'methods')
+  const filtersCollection = findObjectProperty(defaultExport, 'filters')
 
-  if (!methodsCollection.length) return
+  if (!filtersCollection.length) return
 
-  const functionNodes = get(methodsCollection).properties.filter(isFunction)
+  const functionNodes = get(filtersCollection).properties.filter(isFunction)
 
   const methodNodes = functionNodes.map(methodProp => {
-    const methodBuilderParams = getFunctionBuilderParams(methodProp)
+    const methodBuilderParams = getFunctionBuilderParams(methodProp, true)
     collector.methods.push(methodProp.key.name)
     return j.variableDeclaration('const', [
       j.variableDeclarator(

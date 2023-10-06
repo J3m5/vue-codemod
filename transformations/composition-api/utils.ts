@@ -84,11 +84,29 @@ export const getFunctionNodeValue = (methodProp: ObjectFunction) => {
   return methodProp.value
 }
 
-export const getFunctionBuilderParams = (methodProp: ObjectFunction) => {
-  const { async, body } = getFunctionNodeValue(methodProp)
+export const findObjectProperty = (
+  defaultExport: ExportDefaultCollection,
+  property: string
+) => {
+  return defaultExport
+    .find(j.ObjectProperty, {
+      key: { name: property }
+    })
+    .filter(
+      path => path.parent.parent.value.type === 'ExportDefaultDeclaration'
+    )
+    .find(j.ObjectExpression)
+    .filter(path => path.parent.value.key.name === property)
+}
+
+export const getFunctionBuilderParams = (
+  methodProp: ObjectFunction,
+  useArgs: boolean = false
+) => {
+  const { async, body, params } = getFunctionNodeValue(methodProp)
   return {
     async,
     body,
-    params: []
+    params: useArgs ? params : []
   }
 }

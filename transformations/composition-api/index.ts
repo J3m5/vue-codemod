@@ -13,6 +13,7 @@ import { Collection, MemberExpression } from 'jscodeshift'
 import { Collector } from './utils'
 import { addImports } from './imports'
 import { transformRefs } from './tranformRefs'
+import { transformFilters } from './filters'
 
 const isVM = (node: MemberExpression) =>
   j.Identifier.check(node.object) &&
@@ -82,6 +83,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   transformRefs({ defaultExport, collector })
   transformMethods({ defaultExport, collector })
 
+  transformFilters({ defaultExport, collector })
   transformComputed({ defaultExport, collector })
 
   // Remove the default export

@@ -23,6 +23,15 @@ export default {
     obj: { a: 1 },
     arr: [1]
   }),
+  filters: {
+    uppercase: value => value.toUpperCase(),
+    lowercase(value) {
+      return value.toLowerCase()
+    },
+    capitalize: function (value) {
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    }
+  },
   methods: {
     async start() {
       console.log(this.$refs.titleDiv)
@@ -41,6 +50,7 @@ export default {
     computeVM1: vm => {
       vm.num + 1
       vm.title = 'title'
+      return vm.title
     },
     computeVM2(vm) {
       vm.num + 2

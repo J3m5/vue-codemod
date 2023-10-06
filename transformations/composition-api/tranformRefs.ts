@@ -10,10 +10,9 @@ export const transformRefs = ({
     .find(j.MemberExpression, { property: { name: '$refs' } })
     .forEach(path => {
       if (!j.ThisExpression.check(path.value.object)) return
-      const property = path.parent.value.property
+      const { property } = path.parent.value
       collector.newImports.vue.add('ref')
-      const parentObject: j.Identifier | j.MemberExpression =
-        j.memberExpression(property, j.identifier('value'))
+      const parentObject = j.memberExpression(property, j.identifier('value'))
       path.parent.replace(parentObject)
 
       if (refs.includes(property.name)) return

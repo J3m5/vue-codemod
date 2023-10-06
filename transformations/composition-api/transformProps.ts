@@ -43,9 +43,13 @@ export const transformProps = ({
   defaultExport,
   collector
 }: TransformParams) => {
-  const propsCollection = defaultExport.find(j.ObjectProperty, {
-    key: { name: 'props' }
-  })
+  const propsCollection = defaultExport
+    .find(j.ObjectProperty, {
+      key: { name: 'props' }
+    })
+    .filter(
+      path => path.parent.parent.value.type === 'ExportDefaultDeclaration'
+    )
 
   const props = getProps(propsCollection)
 

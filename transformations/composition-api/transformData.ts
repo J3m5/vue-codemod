@@ -38,6 +38,9 @@ const getDataCollection = (defaultExport: ExportDefaultCollection) => {
     .find(j.ObjectProperty, {
       key: { name: 'data' }
     })
+    .filter(
+      path => path.parent.parent.value.type === 'ExportDefaultDeclaration'
+    )
     .find(j.ObjectProperty)
     .filter(filterData)
 
@@ -46,6 +49,7 @@ const getDataCollection = (defaultExport: ExportDefaultCollection) => {
     .find(j.ObjectMethod, {
       key: { name: 'data' }
     })
+
     .find(j.ObjectProperty)
     .filter(filterData)
 
