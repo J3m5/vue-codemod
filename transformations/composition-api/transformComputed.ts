@@ -15,7 +15,7 @@ export const transformComputed = ({
     .filter(path => path.parent.value.key.name === 'computed')
 
   if (!computedCollection.length) return
-
+  collector.newImports.vue.add('computed')
   const functionNodes = get(computedCollection).properties.filter(isFunction)
 
   const computedNodes = functionNodes.map(computed => {

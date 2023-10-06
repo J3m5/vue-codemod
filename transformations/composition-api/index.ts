@@ -11,6 +11,8 @@ import { transformComputed } from './transformComputed'
 
 import { Collection, MemberExpression } from 'jscodeshift'
 import { Collector } from './utils'
+import { addImports } from './imports'
+import { transformRefs } from './tranformRefs'
 
 const isVM = (node: MemberExpression) =>
   j.Identifier.check(node.object) &&
@@ -57,7 +59,16 @@ const removeThisAndVM = (collection: Collection, collector: Collector) => {
   })
 }
 
-const collector: Collector = { refs: [], props: [], methods: [] }
+const collector: Collector = {
+  refs: [],
+  props: [],
+  methods: [],
+  newImports: {
+    vue: new Set(),
+    'vue-router': new Set(),
+    vuex: new Set()
+  }
+}
 export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('props', global.outputReport)
   // Find the default export object
@@ -68,6 +79,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
   transformData({ defaultExport, collector })
 
+  transformRefs({ defaultExport, collector })
   transformMethods({ defaultExport, collector })
 
   transformComputed({ defaultExport, collector })
@@ -75,6 +87,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   // Remove the default export
   removeThisAndVM(defaultExport, collector)
 
+  addImports({ defaultExport, collector })
   defaultExport.remove()
 
   cntFunc()

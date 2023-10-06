@@ -1,5 +1,7 @@
 <template>
-  {{ title }}
+  <div ref="titleDiv">
+    {{ title }}
+  </div>
 </template>
 
 <script>
@@ -23,6 +25,7 @@ export default {
   }),
   methods: {
     async start() {
+      console.log(this.$refs.titleDiv)
       this.loading = false
     },
     finish: async bool => {

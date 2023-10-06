@@ -66,6 +66,8 @@ export const transformData = ({
     const refValue = getRefValue({ node: dataProp, j })
 
     if (!refValue) return []
+    collector.newImports.vue.add('ref')
+
     collector.refs.push(dataProp.key.name)
     return j.variableDeclaration('const', [
       j.variableDeclarator(

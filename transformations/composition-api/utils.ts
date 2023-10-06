@@ -13,10 +13,15 @@ import type {
 import j from 'jscodeshift'
 import { fromPaths } from 'jscodeshift/src/Collection'
 
+export type Imports = 'vue' | 'vue-router' | 'vuex'
+
 export type Collector = {
   refs: string[]
   props: string[]
   methods: string[]
+  newImports: {
+    [x in Imports]: Set<string>
+  }
 }
 export type ExportDefaultCollection = Collection<ExportDefaultDeclaration>
 export interface TransformParams {
