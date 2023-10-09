@@ -1,7 +1,10 @@
 import j from 'jscodeshift'
 import type { Imports, TransformParams } from './utils'
 
-export const addImports = ({ defaultExport, collector }: TransformParams) => {
+export const insertImports = ({
+  defaultExport,
+  collector
+}: TransformParams) => {
   Object.keys(collector.newImports).forEach(key => {
     const importKeys = [...collector.newImports[key as Imports]]
     if (!importKeys.length) return

@@ -1,7 +1,7 @@
 import type { ASTPath, JSCodeshift, ObjectProperty } from 'jscodeshift'
-import { isKeyIdentifier } from './utils'
-import type { ExportDefaultCollection, TransformParams } from './utils'
 import j from 'jscodeshift'
+import type { ExportDefaultCollection, TransformParams } from './utils'
+import { isKeyIdentifier } from './utils'
 
 const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
   const { value } = node
@@ -64,13 +64,14 @@ export const transformData = ({
   const dataCollection = getDataCollection(defaultExport)
   if (!dataCollection) return
 
-  const functionNodes = dataCollection.nodes().filter(isKeyIdentifier)
+  const dataNodes = dataCollection.nodes().filter(isKeyIdentifier)
 
-  const refNodes = functionNodes.flatMap(dataProp => {
+  if (!dataNodes.length) return
+
+  const refNodes = dataNodes.flatMap(dataProp => {
     const refValue = getRefValue({ node: dataProp, j })
 
     if (!refValue) return []
-    collector.newImports.vue.add('ref')
 
     collector.refs.push(dataProp.key.name)
     return j.variableDeclaration('const', [
@@ -81,5 +82,7 @@ export const transformData = ({
     ])
   })
 
-  defaultExport.insertBefore(refNodes)
+  if (!refNodes.length) return
+  collector.newImports.vue.add('ref')
+  collector.dataNodes = refNodes
 }

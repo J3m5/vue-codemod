@@ -23,6 +23,42 @@ export default {
     obj: { a: 1 },
     arr: [1]
   }),
+  watch: {
+    title(val, oldVal) {
+      console.log(val, oldVal)
+    },
+    undef: (val, oldVal) => {
+      console.log(val, oldVal)
+    },
+    nan: (val, oldVal) => console.log(val, oldVal),
+    num: {
+      handler(val, oldVal) {
+        console.log(val, oldVal)
+      },
+      deep: true,
+      immediate: true
+    },
+    nu: {
+      handler: (val, oldVal) => {
+        console.log(val, oldVal)
+      },
+      deep: true,
+      immediate: true
+    },
+    loading: {
+      handler: function (val, oldVal) {
+        console.log(val, oldVal)
+      },
+      deep: true,
+      immediate: true
+    },
+    'obj.a': (val, oldVal) => {
+      console.log(val, oldVal)
+    },
+    loading: function (val, oldVal) {
+      console.log(val, oldVal)
+    }
+  },
   filters: {
     uppercase: value => value.toUpperCase(),
     lowercase(value) {

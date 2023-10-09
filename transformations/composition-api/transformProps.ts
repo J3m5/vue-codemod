@@ -55,7 +55,7 @@ export const transformProps = ({
 
   if (!props) return
   const propsNames = getPropsNames(props)
-  collector.props.push(...propsNames)
+  collector.propsNames.push(...propsNames)
   const propsDefinition = j.variableDeclaration('const', [
     j.variableDeclarator(
       j.identifier('props'),
@@ -63,6 +63,5 @@ export const transformProps = ({
       j.callExpression(j.identifier('defineProps'), [props])
     )
   ])
-
-  defaultExport.insertBefore(propsDefinition)
+  collector.propsNodes.push(propsDefinition)
 }

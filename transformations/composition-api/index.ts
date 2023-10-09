@@ -1,69 +1,29 @@
-import j from 'jscodeshift'
-
-import wrap from '../../src/wrapAstTransformation'
-import type { ASTTransformation } from '../../src/wrapAstTransformation'
 import { getCntFunc } from '../../src/report'
+import type { ASTTransformation } from '../../src/wrapAstTransformation'
+import wrap from '../../src/wrapAstTransformation'
 
-import { transformProps } from './transformProps'
+import { transformComputed } from './transformComputed'
 import { transformData } from './transformData'
 import { transformMethods } from './transformMethods'
-import { transformComputed } from './transformComputed'
+import { transformProps } from './transformProps'
 
-import { Collection, MemberExpression } from 'jscodeshift'
-import { Collector } from './utils'
-import { addImports } from './imports'
-import { transformRefs } from './tranformRefs'
 import { transformFilters } from './filters'
-
-const isVM = (node: MemberExpression) =>
-  j.Identifier.check(node.object) &&
-  'name' in node.object &&
-  node.object.name === 'vm'
-
-const isThis = (node: MemberExpression) => j.ThisExpression.check(node.object)
-
-const removeThisAndVM = (collection: Collection, collector: Collector) => {
-  collection.find(j.MemberExpression).forEach(path => {
-    if (!('name' in path.value.property)) return
-    const { name } = path.value.property
-    if (typeof name !== 'string') return
-    if (!(isVM(path.value) || isThis(path.value))) {
-      return
-    }
-
-    const refNode = j.identifier(name)
-    if (collector.refs.includes(name)) {
-      const refValueNode = j.memberExpression(refNode, j.identifier('value'))
-      path.replace(refValueNode)
-    }
-    if (collector.props.includes(name)) {
-      const refValueNode = j.memberExpression(j.identifier('props'), refNode)
-      path.replace(refValueNode)
-    }
-  })
-
-  collection.find(j.CallExpression).forEach(path => {
-    if (
-      !j.MemberExpression.check(path.value.callee) ||
-      !j.Identifier.check(path.value.callee.property)
-    )
-      return
-    const name = path.value.callee.property.name
-
-    if (collector.methods.includes(name)) {
-      const refValueNode = j.expressionStatement(
-        j.callExpression(j.identifier(name), path.value.arguments)
-      )
-
-      path.replace(refValueNode)
-    }
-  })
-}
+import { transformRefs } from './tranformRefs'
+import { removeThis } from './transformThis'
+import { transformWatchers } from './transformWatchers'
+import { Collector } from './utils'
+import { insertNodes } from './insertNodes'
 
 const collector: Collector = {
+  dataNodes: [],
   refs: [],
-  props: [],
-  methods: [],
+  refNodes: [],
+  propsNames: [],
+  propsNodes: [],
+  methodNames: [],
+  methodNodes: [],
+  computedNodes: [],
+  watchNodes: [],
   newImports: {
     vue: new Set(),
     'vue-router': new Set(),
@@ -72,7 +32,6 @@ const collector: Collector = {
 }
 export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('props', global.outputReport)
-  // Find the default export object
 
   const defaultExport = root.find(j.ExportDefaultDeclaration)
 
@@ -84,12 +43,14 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   transformMethods({ defaultExport, collector })
 
   transformFilters({ defaultExport, collector })
+
   transformComputed({ defaultExport, collector })
 
-  // Remove the default export
-  removeThisAndVM(defaultExport, collector)
+  transformWatchers({ defaultExport, collector })
 
-  addImports({ defaultExport, collector })
+  removeThis(defaultExport, collector)
+
+  insertNodes({ defaultExport, collector })
   defaultExport.remove()
 
   cntFunc()

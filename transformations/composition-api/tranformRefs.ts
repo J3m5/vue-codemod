@@ -6,24 +6,29 @@ export const transformRefs = ({
   collector
 }: TransformParams) => {
   const refs: string[] = []
-  defaultExport
-    .find(j.MemberExpression, { property: { name: '$refs' } })
-    .forEach(path => {
-      if (!j.ThisExpression.check(path.value.object)) return
-      const { property } = path.parent.value
-      collector.newImports.vue.add('ref')
-      const parentObject = j.memberExpression(property, j.identifier('value'))
-      path.parent.replace(parentObject)
+  const $refsCollection = defaultExport.find(j.MemberExpression, {
+    property: { name: '$refs' }
+  })
 
-      if (refs.includes(property.name)) return
-      defaultExport.insertBefore(
-        j.variableDeclaration('const', [
-          j.variableDeclarator(
-            j.identifier(property.name),
-            j.callExpression(j.identifier('ref'), [j.identifier('null')])
-          )
-        ])
-      )
+  $refsCollection.forEach(path => {
+    if (!j.ThisExpression.check(path.value.object)) return
+    const { property } = path.parent.value
+    collector.newImports.vue.add('ref')
+    const parentObject = j.memberExpression(property, j.identifier('value'))
+    path.parent.replace(parentObject)
+
+    if (!refs.includes(property.name)) {
       refs.push(property.name)
-    })
+    }
+  })
+
+  const refNodes = refs.map(ref => {
+    return j.variableDeclaration('const', [
+      j.variableDeclarator(
+        j.identifier(ref),
+        j.callExpression(j.identifier('ref'), [j.identifier(ref)])
+      )
+    ])
+  })
+  collector.refNodes = refNodes
 }

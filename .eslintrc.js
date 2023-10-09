@@ -17,13 +17,6 @@ module.exports = {
       // catches unused variables but not args.
       { varsIgnorePattern: '.*', args: 'none' }
     ],
-    // since we target ES2015 for baseline support, we need to forbid object
-    // rest spread usage (both assign and destructure)
-    'no-restricted-syntax': [
-      'error',
-      'ObjectExpression > SpreadElement',
-      'ObjectPattern > RestElement'
-    ]
   },
   overrides: [
     // tests, no restrictions (runs in Node / jest with jsdom)

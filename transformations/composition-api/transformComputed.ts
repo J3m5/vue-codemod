@@ -1,11 +1,11 @@
+import j from 'jscodeshift'
+import type { TransformParams } from './utils'
 import {
   findObjectProperty,
   get,
   getFunctionBuilderParams,
   isFunction
 } from './utils'
-import type { TransformParams } from './utils'
-import j from 'jscodeshift'
 
 export const transformComputed = ({
   defaultExport,
@@ -15,22 +15,33 @@ export const transformComputed = ({
   const computedCollection = findObjectProperty(defaultExport, 'computed')
 
   if (!computedCollection.length) return
-  collector.newImports.vue.add('computed')
+
   const functionNodes = get(computedCollection).properties.filter(isFunction)
 
+  if (!functionNodes.length) return
+
+  collector.newImports.vue.add('computed')
+
   const computedNodes = functionNodes.map(computed => {
-    collector.refs.push(computed.key.name)
+    const { name } = computed.key
+    collector.refs.push(name)
     const computedBuilderParams = getFunctionBuilderParams(computed)
 
-    return j.variableDeclaration('const', [
-      j.variableDeclarator(
-        j.identifier(computed.key.name),
-        j.callExpression(j.identifier('computed'), [
-          j.arrowFunctionExpression.from(computedBuilderParams)
-        ])
-      )
-    ])
+    return [
+      name,
+      j.variableDeclaration('const', [
+        j.variableDeclarator(
+          j.identifier(name),
+          j.callExpression(j.identifier('computed'), [
+            j.arrowFunctionExpression.from(computedBuilderParams)
+          ])
+        )
+      ])
+    ]
   })
 
-  defaultExport.insertBefore(computedNodes)
+  collector.computedNodes = {
+    ...collector.computedNodes,
+    ...Object.fromEntries(computedNodes)
+  }
 }

@@ -2,12 +2,14 @@ import type {
   ArrowFunctionExpression,
   Collection,
   ExportDefaultDeclaration,
+  ExpressionStatement,
   FunctionExpression,
   Identifier,
   Node,
   ObjectExpression,
   ObjectMethod,
-  ObjectProperty
+  ObjectProperty,
+  VariableDeclaration
 } from 'jscodeshift'
 
 import j from 'jscodeshift'
@@ -16,9 +18,15 @@ import { fromPaths } from 'jscodeshift/src/Collection'
 export type Imports = 'vue' | 'vue-router' | 'vuex'
 
 export type Collector = {
+  dataNodes: VariableDeclaration[]
   refs: string[]
-  props: string[]
-  methods: string[]
+  refNodes: VariableDeclaration[]
+  propsNames: string[]
+  propsNodes: VariableDeclaration[]
+  methodNames: string[]
+  methodNodes: { [methodName: string]: VariableDeclaration }[]
+  computedNodes: { [methodName: string]: VariableDeclaration }[]
+  watchNodes: ExpressionStatement[]
   newImports: {
     [x in Imports]: Set<string>
   }
