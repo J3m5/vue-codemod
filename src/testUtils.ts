@@ -1,4 +1,4 @@
-import type { FileInfo, Options, Transform } from 'jscodeshift'
+import type { Options, API } from 'jscodeshift'
 import jscodeshift from 'jscodeshift'
 import type { TestOptions } from 'jscodeshift/src/testUtils'
 import fs from 'node:fs'
@@ -6,6 +6,20 @@ import path from 'node:path'
 import transformationMap from '../transformations'
 import vueTransformationMap from '../vue-transformations'
 import runTransformation from './runTransformation'
+import { test, expect, describe } from 'bun:test'
+
+export type FileInfo =
+  | { path?: string; source: string }
+  | { path: string; source: string }
+export interface Transform {
+  /**
+   * If a string is returned and it is different from passed source, the transform is considered to be successful.
+   * If a string is returned but it's the same as the source, the transform is considered to be unsuccessful.
+   * If nothing is returned, the file is not supposed to be transformed (which is ok).
+   */
+  (file: FileInfo, api: API, options: Options): string | null | undefined | void
+  parser?: string
+}
 
 type Module =
   | {
@@ -16,7 +30,7 @@ type Module =
 
 function applyTransform(
   module: Module,
-  input: FileInfo,
+  input: { path?: string; source: string },
   options: Options = {},
   testOptions: TestOptions = {}
 ) {
@@ -47,14 +61,33 @@ function applyTransform(
 
 function runInlineTest(
   module: Module,
+  options: Options | undefined,
   input: FileInfo,
   expectedOutput: string,
-  options?: Options,
   testOptions?: TestOptions
 ) {
   const output = applyTransform(module, input, options, testOptions)
   expect(output).toEqual(expectedOutput.trim())
   return output
+}
+
+export function defineInlineTest(
+  module: Module,
+  options: Options,
+  inputSource: string,
+  expectedOutputSource: string,
+  testName?: string
+) {
+  test(testName || 'transforms correctly', () => {
+    runInlineTest(
+      module,
+      options,
+      {
+        source: inputSource
+      },
+      expectedOutputSource
+    )
+  })
 }
 
 function extensionForParser(parser: string) {
@@ -93,12 +126,12 @@ async function runJSTest(
   )
   runInlineTest(
     module,
+    options,
     {
       path: inputPath,
       source
     },
     expectedOutput,
-    options,
     testOptions
   )
 }
@@ -118,7 +151,7 @@ export function defineTest(
     ? `transforms correctly using "${testFilePrefix}" data`
     : 'transforms correctly'
   describe(transformName, () => {
-    it(testName, () => {
+    test(testName, () => {
       runJSTest(dirName, transformName, options, testFilePrefix, testOptions)
     })
   })

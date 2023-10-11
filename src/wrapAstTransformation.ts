@@ -1,10 +1,11 @@
-import type { JSCodeshift, Core, API, FileInfo } from 'jscodeshift'
+import type { JSCodeshift, Core, API } from 'jscodeshift'
 import { cliInstance } from './report'
+import type { FileInfo } from './testUtils'
 
 export type Context = {
   root: ReturnType<Core>
   j: JSCodeshift
-  filename: string
+  filename?: string
 }
 
 export type Params = {

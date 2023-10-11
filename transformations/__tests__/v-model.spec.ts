@@ -1,4 +1,4 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import { defineInlineTest } from '../../src/testUtils.js'
 
 import transform, { parser } from '../v-model'
 

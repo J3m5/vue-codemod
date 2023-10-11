@@ -1,6 +1,6 @@
 import type { Transform } from 'jscodeshift'
 import runTransformation from '../runTransformation'
-import { StatementKind } from 'ast-types/gen/kinds'
+import { StatementKind } from 'ast-types/lib/gen/kinds'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')
@@ -47,14 +47,14 @@ const addUseStrict: Transform = (file, api, options) => {
 }
 
 describe('run-transformation', () => {
-  it.only('transforms .js files', () => {
+  test.only('transforms .js files', () => {
     const source = `function a() { console.log('hello') }`
     const file = { path: '/tmp/a.js', source }
     const result = runTransformation(file, addUseStrict)
     expect(result).toBe(`'use strict';\nfunction a() { console.log('hello') }`)
   })
 
-  it.todo('transforms .ts files')
+  test.todo('transforms .ts files')
 
   it('transforms script blocks in .vue files', () => {
     const source = `<template>
@@ -184,7 +184,9 @@ export default {
 `)
   })
 
-  it.todo('transforms script blocks with custom lang attributes in .vue files')
+  test.todo(
+    'transforms script blocks with custom lang attributes in .vue files'
+  )
 
   it('(jscodeshift transforms) skips .vue files without script blocks', () => {
     const source = `
@@ -216,5 +218,5 @@ export default {
     expect(result).toEqual(source)
   })
 
-  it.todo('(VueTransformation) transforms template blocks in .vue files')
+  test.todo('(VueTransformation) transforms template blocks in .vue files')
 })

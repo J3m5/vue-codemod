@@ -441,12 +441,12 @@ function createBlock(
         block.src = p.value && p.value.content
       } else if (type === 'style') {
         if (p.name === 'scoped') {
-          ;(block as SFCStyleBlock).scoped = true
+          (block as SFCStyleBlock).scoped = true
         } else if (p.name === 'module') {
-          ;(block as SFCStyleBlock).module = attrs[p.name]
+          (block as SFCStyleBlock).module = attrs[p.name]
         }
       } else if (type === 'script' && p.name === 'setup') {
-        ;(block as SFCScriptBlock).setup = attrs.setup
+        (block as SFCScriptBlock).setup = attrs.setup
       }
     }
   })

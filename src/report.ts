@@ -1,5 +1,7 @@
 import { table } from 'table'
 import cliProgress from 'cli-progress'
+import { ASTNode, ASTPath } from 'jscodeshift'
+import { Node as EslintNode } from 'vue-eslint-parser/ast/nodes'
 
 export const cliInstance = new cliProgress.SingleBar(
   {
@@ -11,8 +13,8 @@ export const cliInstance = new cliProgress.SingleBar(
   cliProgress.Presets.shades_classic
 )
 export function pushManualList(
-  path: string,
-  node: any,
+  path: string | undefined = '',
+  node: ASTNode | ASTPath<ASTNode>,
   name: string,
   suggest: string,
   website: string
@@ -26,13 +28,18 @@ export function pushManualList(
   } else {
     index = 0
   }
-  let line
+  let line = 0
   let column
-  if (node?.loc) {
-    line = node?.loc?.start.line
-    column = node?.loc?.start.column
-  } else {
-    line = node?.value?.loc?.start.line
+  if ('loc' in node && node.loc) {
+    line = node.loc.start.line || 0
+    column = node.loc.start.column
+  } else if (
+    'value' in node &&
+    node.value &&
+    typeof node.value === 'object' &&
+    'loc' in node.value
+  ) {
+    line = node?.value?.loc?.start.line || 0
     column = node?.value?.loc?.start.column
   }
   index = line + index
@@ -49,14 +56,15 @@ export function pushManualList(
 }
 
 export function VuePushManualList(
-  path: string,
-  node: any,
+  path: string | undefined,
+  node: ASTNode | ASTPath<ASTNode> | EslintNode,
   name: string,
   suggest: string,
   website: string
 ) {
-  const position: string =
-    '[' + node?.loc?.start.line + ',' + node?.loc?.start.column + ']'
+  const line = 'loc' in node ? node?.loc?.start.line : 0
+  const column = 'loc' in node ? node?.loc?.start.column : 0
+  const position = '[' + line + ',' + column + ']'
   const list = {
     path: path,
     position: position,
@@ -135,7 +143,7 @@ export function formatterOutput(
     console.log('The transformation stats: \n')
     console.log(global.outputReport)
   } else {
-    const tableOutput: any[][] = [['Rule Names', 'Count']]
+    const tableOutput: (string | number)[][] = [['Rule Names', 'Count']]
     for (const i in global.outputReport) {
       tableOutput.push([i, global.outputReport[i]])
     }

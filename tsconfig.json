@@ -28,7 +28,7 @@
     "declaration": true,
     "removeComments": false,
 
-    "types": ["jest", "jscodeshift", "node", "ast-types"],
+    "types": ["jest", "jscodeshift", "node", "ast-types", "bun-types"],
     "rootDir": "."
   },
   "exclude": ["dist", "playground", "node_modules"]

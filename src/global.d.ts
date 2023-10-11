@@ -3,11 +3,11 @@
 // Custom global variables
 export type GlobalApi = {
   name: string
-  path: string
+  path?: string
 }
 
 export type ManualList = {
-  path: string
+  path?: string
   position: string
   name: string
   suggest: string

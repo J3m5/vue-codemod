@@ -1,5 +1,5 @@
 import transform from '../global-filter'
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 
 defineInlineTest(
   transform,

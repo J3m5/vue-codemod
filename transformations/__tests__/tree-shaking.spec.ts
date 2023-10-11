@@ -1,4 +1,4 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import { defineInlineTest } from '../../src/testUtils.js'
 
 import nextTick, { parser as nextTickParser } from '../next-tick'
 import observable, { parser as nextObservable } from '../observable'

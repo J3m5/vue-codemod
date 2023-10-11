@@ -1,4 +1,4 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import { defineInlineTest } from '../../src/testUtils.js'
 import type { GlobalApi } from '../../src/global'
 import transform, { parser } from '../root-prop-to-use'
 

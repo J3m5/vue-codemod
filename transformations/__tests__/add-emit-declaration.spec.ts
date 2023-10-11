@@ -1,4 +1,4 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 import transform, { parser } from '../add-emit-declaration'
 
 defineInlineTest(

@@ -1,9 +1,9 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
 import runTransformation from '../../src/runTransformation.js'
 
 import transform, { parser } from '../define-component.js'
+import { defineInlineTest } from '../../src/testUtils.js'
 
 defineInlineTest(
   { default: transform, parser },

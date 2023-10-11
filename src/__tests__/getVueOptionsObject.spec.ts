@@ -1,7 +1,6 @@
-import type { Transform } from 'jscodeshift'
 import { getVueOptions } from '../astUtils'
 
-import { defineInlineTest } from 'jscodeshift/src/testUtils.js'
+import { Transform, defineInlineTest } from '../testUtils'
 
 const printVueOptions: Transform = function (
   file,
@@ -27,7 +26,6 @@ const printVueOptions: Transform = function (
   return result
 }
 
-// @ts-ignore
 printVueOptions.parser = 'babylon'
 
 defineInlineTest(

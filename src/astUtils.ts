@@ -168,7 +168,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     return false
   }
 
-  const isInSFC = filename.endsWith('.vue')
+  const isInSFC = !!filename && filename.endsWith('.vue')
 
   // export default {}
   const defaultObjectExport = root
