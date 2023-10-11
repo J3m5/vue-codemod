@@ -1,4 +1,10 @@
-import type { ASTPath, JSCodeshift, ObjectProperty } from 'jscodeshift'
+import type {
+  ASTPath,
+  Identifier,
+  JSCodeshift,
+  ObjectExpression,
+  ObjectProperty
+} from 'jscodeshift'
 import j from 'jscodeshift'
 import type { ExportDefaultCollection, TransformParams } from './utils'
 import { isKeyIdentifier } from './utils'
@@ -11,50 +17,43 @@ const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
     return j.literal(value.value)
   }
 
-  // Get object, array, variable, new expression, null, and undefined node
+  // Get all other valid nodes
   if (
-    j.ObjectExpression.check(value) ||
-    j.ArrayExpression.check(value) ||
-    j.Identifier.check(value) ||
-    j.NewExpression.check(value)
+    !j.TSParameterProperty.check(value) &&
+    !j.TSTypeAssertion.check(value) &&
+    !j.RestElement.check(value) &&
+    !j.SpreadElementPattern.check(value) &&
+    !j.PropertyPattern.check(value) &&
+    !j.ObjectPattern.check(value) &&
+    !j.ArrayPattern.check(value) &&
+    !j.AssignmentPattern.check(value) &&
+    !j.SpreadPropertyPattern.check(value)
   ) {
     return value
   }
 }
 
-const filterData = (dataPropertyPath: ASTPath<ObjectProperty>) => {
-  const grandParent = dataPropertyPath.parent.parent.value
-  if (
+const filterData = (dataPropertyPath: ASTPath<ObjectExpression>) => {
+  const grandParent = dataPropertyPath.parent.value
+
+  return (
     ['ArrowFunctionExpression', 'ReturnStatement'].includes(grandParent.type) ||
     grandParent.key.name === 'data'
-  ) {
-    return true
-  }
-  return false
+  )
+}
+
+const grandParentIsExport = (path: ASTPath<Identifier>) => {
+  return path.parent.parent.parent.value.type === 'ExportDefaultDeclaration'
 }
 
 const getDataCollection = (defaultExport: ExportDefaultCollection) => {
-  const dataCollection = defaultExport
-    .find(j.ObjectProperty, {
-      key: { name: 'data' }
-    })
-    .filter(
-      path => path.parent.parent.value.type === 'ExportDefaultDeclaration'
-    )
-    .find(j.ObjectProperty)
+  return defaultExport
+    .find(j.Identifier, { name: 'data' })
+    .filter(grandParentIsExport)
+    .map(path => path.parentPath)
+    .find(j.ObjectExpression)
     .filter(filterData)
-
-  if (dataCollection.length) return dataCollection
-  const dataMethodCollection = defaultExport
-    .find(j.ObjectMethod, {
-      key: { name: 'data' }
-    })
-
-    .find(j.ObjectProperty)
-    .filter(filterData)
-
-  if (dataMethodCollection.length) return dataMethodCollection
-  return undefined
+    .map(path => path.get('properties') as ASTPath<ObjectProperty>[])
 }
 
 export const transformData = ({
@@ -62,9 +61,10 @@ export const transformData = ({
   collector
 }: TransformParams) => {
   const dataCollection = getDataCollection(defaultExport)
+
   if (!dataCollection) return
 
-  const dataNodes = dataCollection.nodes().filter(isKeyIdentifier)
+  const dataNodes = dataCollection.nodes().flat().filter(isKeyIdentifier)
 
   if (!dataNodes.length) return
 
@@ -73,16 +73,21 @@ export const transformData = ({
 
     if (!refValue) return []
 
-    collector.refs.push(dataProp.key.name)
-    return j.variableDeclaration('const', [
-      j.variableDeclarator(
-        j.identifier(dataProp.key.name),
-        j.callExpression(j.identifier('ref'), [refValue])
-      )
-    ])
+    const { name } = dataProp.key
+    const identifier = j.ObjectExpression.check(refValue) ? 'reactive' : 'ref'
+    return [
+      [
+        name,
+        j.variableDeclaration('const', [
+          j.variableDeclarator(
+            j.identifier(name),
+            j.callExpression(j.identifier(identifier), [refValue])
+          )
+        ])
+      ]
+    ] as const
   })
 
   if (!refNodes.length) return
-  collector.newImports.vue.add('ref')
-  collector.dataNodes = refNodes
+  collector.nodes.data = new Map(refNodes)
 }
