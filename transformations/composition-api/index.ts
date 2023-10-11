@@ -8,31 +8,29 @@ import { transformMethods } from './transformMethods'
 import { transformProps } from './transformProps'
 
 import { transformFilters } from './filters'
+import { insertNodes } from './insertNodes'
 import { transformRefs } from './tranformRefs'
 import { removeThis } from './transformThis'
 import { transformWatchers } from './transformWatchers'
 import { Collector } from './utils'
-import { insertNodes } from './insertNodes'
+import { addImports } from './addImports'
 
-const collector: Collector = {
-  dataNodes: [],
-  refs: [],
-  refNodes: [],
-  propsNames: [],
-  propsNodes: [],
-  methodNames: [],
-  methodNodes: [],
-  computedNodes: [],
-  watchNodes: [],
-  newImports: {
-    vue: new Set(),
-    'vue-router': new Set(),
-    vuex: new Set()
-  }
-}
+const getCollector = (): Collector => ({
+  nodes: {
+    imports: [],
+    props: [],
+    data: new Map(),
+    ref: new Map(),
+    computed: new Map(),
+    method: new Map(),
+    watch: []
+  },
+  propsNames: []
+})
+
 export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('props', global.outputReport)
-
+  const collector = getCollector()
   const defaultExport = root.find(j.ExportDefaultDeclaration)
 
   transformProps({ defaultExport, collector })
@@ -49,6 +47,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   transformWatchers({ defaultExport, collector })
 
   removeThis(defaultExport, collector)
+
+  addImports({ defaultExport, collector })
 
   insertNodes({ defaultExport, collector })
   defaultExport.remove()

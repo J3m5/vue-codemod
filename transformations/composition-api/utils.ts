@@ -5,6 +5,7 @@ import type {
   ExpressionStatement,
   FunctionExpression,
   Identifier,
+  ImportDeclaration,
   Node,
   ObjectExpression,
   ObjectMethod,
@@ -18,33 +19,37 @@ import { fromPaths } from 'jscodeshift/src/Collection'
 export type Imports = 'vue' | 'vue-router' | 'vuex'
 
 export type Collector = {
-  dataNodes: VariableDeclaration[]
-  refs: string[]
-  refNodes: VariableDeclaration[]
-  propsNames: string[]
-  propsNodes: VariableDeclaration[]
-  methodNames: string[]
-  methodNodes: { [methodName: string]: VariableDeclaration }[]
-  computedNodes: { [methodName: string]: VariableDeclaration }[]
-  watchNodes: ExpressionStatement[]
-  newImports: {
-    [x in Imports]: Set<string>
+  nodes: {
+    props: VariableDeclaration[]
+    data: Map<string, VariableDeclaration>
+    ref: Map<string, VariableDeclaration>
+    computed: Map<string, VariableDeclaration>
+    method: Map<string, VariableDeclaration>
+    watch: ExpressionStatement[]
+    imports: ImportDeclaration[]
   }
+  propsNames: string[]
 }
+export type CollectorKeys = keyof Collector['nodes']
+
+export type CollectorValues = Collector['nodes'][CollectorKeys]
+
 export type ExportDefaultCollection = Collection<ExportDefaultDeclaration>
 export interface TransformParams {
   defaultExport: ExportDefaultCollection
   collector: Collector
 }
 
-export type ObjectFunction =
-  | (ObjectMethod & {
-      key: Identifier
-    })
-  | (ObjectProperty & {
-      value: ArrowFunctionExpression | FunctionExpression
-      key: Identifier
-    })
+interface ObjectMethodWithKey extends ObjectMethod {
+  key: Identifier
+}
+
+interface ObjectPropertyWithKey extends ObjectProperty {
+  value: ArrowFunctionExpression | FunctionExpression
+  key: Identifier
+}
+
+export type ObjectFunction = ObjectMethodWithKey | ObjectPropertyWithKey
 
 type Property = ObjectExpression['properties'][number]
 
@@ -69,9 +74,7 @@ export const findFunctions = (
 export const isFunction = (node: Property): node is ObjectFunction => {
   if (!('key' in node) || !j.Identifier.check(node.key)) return false
 
-  if (j.ObjectMethod.check(node)) {
-    return true
-  }
+  if (j.ObjectMethod.check(node)) return true
   if (
     j.ObjectProperty.check(node) &&
     (j.ArrowFunctionExpression.check(node.value) ||

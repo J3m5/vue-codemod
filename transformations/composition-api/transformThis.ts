@@ -19,7 +19,11 @@ export const removeThis = (collection: Collection, collector: Collector) => {
     }
 
     const refNode = j.identifier(name)
-    if (collector.refs.includes(name)) {
+    if (
+      collector.nodes.data.get(name) ||
+      collector.nodes.ref.get(name) ||
+      collector.nodes.computed.get(name)
+    ) {
       const refValueNode = j.memberExpression(refNode, j.identifier('value'))
       path.replace(refValueNode)
     }
@@ -36,8 +40,7 @@ export const removeThis = (collection: Collection, collector: Collector) => {
     )
       return
     const name = path.value.callee.property.name
-
-    if (collector.methodNames.includes(name)) {
+    if (collector.nodes.method.get(name)) {
       const refValueNode = j.expressionStatement(
         j.callExpression(j.identifier(name), path.value.arguments)
       )

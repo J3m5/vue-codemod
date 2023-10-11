@@ -63,5 +63,5 @@ export const transformProps = ({
       j.callExpression(j.identifier('defineProps'), [props])
     )
   ])
-  collector.propsNodes.push(propsDefinition)
+  collector.nodes.props.push(propsDefinition)
 }

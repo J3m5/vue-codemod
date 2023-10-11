@@ -25,7 +25,6 @@ export const transformMethods = ({
   const methodNodes = functionNodes.map(methodProp => {
     const methodBuilderParams = getFunctionBuilderParams(methodProp)
     const { name } = methodProp.key
-    collector.methodNames.push(name)
     return [
       name,
       j.variableDeclaration('const', [
@@ -34,11 +33,8 @@ export const transformMethods = ({
           j.arrowFunctionExpression.from(methodBuilderParams)
         )
       ])
-    ]
+    ] as const
   })
 
-  collector.methodNodes = {
-    ...collector.methodNodes,
-    ...Object.fromEntries(methodNodes)
-  }
+  collector.nodes.method = new Map([...collector.nodes.method, ...methodNodes])
 }

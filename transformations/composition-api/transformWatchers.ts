@@ -59,13 +59,12 @@ export const transformWatchers = ({
 
   const functionNodes = get(watchCollection).properties.filter(isFunction)
   if (functionNodes.length) {
-    collector.newImports.vue.add('watch')
     const watcherNodes = functionNodes.map(handlerNode => {
       const handlerBuilderParams = getFunctionBuilderParams(handlerNode, true)
       const watchSource = getWatchSource(collector, handlerNode.key.name)
       return buildWatcher(watchSource, handlerBuilderParams)
     })
-    collector.watchNodes.push(...watcherNodes)
+    collector.nodes.watch.push(...watcherNodes)
   }
   const watcherNodes = watchCollection
     .find(j.ObjectProperty, { value: { type: 'ObjectExpression' } })
@@ -93,6 +92,5 @@ export const transformWatchers = ({
       return buildWatcher(watchSource, handlerBuilderParams, watchOptions)
     })
   if (!watcherNodes.length) return
-  collector.newImports.vue.add('watch')
-  collector.watchNodes.push(...watcherNodes)
+  collector.nodes.watch.push(...watcherNodes)
 }

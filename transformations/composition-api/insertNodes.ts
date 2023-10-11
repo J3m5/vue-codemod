@@ -1,20 +1,13 @@
-// import j from 'jscodeshift'
+import type { CollectorValues, TransformParams } from './utils'
 
-import { insertImports } from './imports'
-import type { TransformParams } from './utils'
+const toArray = (nodes: CollectorValues) => {
+  return Array.isArray(nodes) ? nodes : [...nodes.values()]
+}
 
 export const insertNodes = ({ defaultExport, collector }: TransformParams) => {
-  // Find the methods of the default export object
-  insertImports({ defaultExport, collector })
+  const nodes = Object.values(collector.nodes)
+    .map(nodeValues => toArray(nodeValues))
+    .flat()
 
-  defaultExport.insertBefore(Object.values(collector.propsNodes))
-
-  defaultExport.insertBefore(Object.values(collector.propsNodes))
-  defaultExport.insertBefore(Object.values(collector.dataNodes))
-  defaultExport.insertBefore(Object.values(collector.refNodes))
-
-  defaultExport.insertBefore(Object.values(collector.computedNodes))
-
-  defaultExport.insertBefore(Object.values(collector.methodNodes))
-  defaultExport.insertBefore(Object.values(collector.watchNodes))
+  defaultExport.insertBefore(nodes)
 }

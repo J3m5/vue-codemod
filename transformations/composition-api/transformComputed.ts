@@ -11,7 +11,6 @@ export const transformComputed = ({
   defaultExport,
   collector
 }: TransformParams) => {
-  // Find the methods of the default export object
   const computedCollection = findObjectProperty(defaultExport, 'computed')
 
   if (!computedCollection.length) return
@@ -20,11 +19,8 @@ export const transformComputed = ({
 
   if (!functionNodes.length) return
 
-  collector.newImports.vue.add('computed')
-
   const computedNodes = functionNodes.map(computed => {
     const { name } = computed.key
-    collector.refs.push(name)
     const computedBuilderParams = getFunctionBuilderParams(computed)
 
     return [
@@ -37,11 +33,8 @@ export const transformComputed = ({
           ])
         )
       ])
-    ]
+    ] as const
   })
 
-  collector.computedNodes = {
-    ...collector.computedNodes,
-    ...Object.fromEntries(computedNodes)
-  }
+  collector.nodes.computed = new Map(computedNodes)
 }
