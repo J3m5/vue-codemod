@@ -1,10 +1,11 @@
-import j, {
+import type {
   ArrayExpression,
   Collection,
   ObjectExpression,
   ObjectProperty
 } from 'jscodeshift'
-import type { TransformParams } from './utils'
+import j from 'jscodeshift'
+import type { TransformParams } from './types'
 import { get } from './utils'
 
 const getProps = (collection: Collection<ObjectProperty>) => {

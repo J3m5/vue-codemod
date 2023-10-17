@@ -1,7 +1,13 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
-import type * as N from 'jscodeshift'
+import type {
+  ObjectProperty,
+  NewExpression,
+  CallExpression,
+  MemberExpression,
+  ObjectExpression
+} from 'jscodeshift'
 import { getCntFunc } from '../src/report'
 
 type Params = {
@@ -82,7 +88,7 @@ export const transformAST: ASTTransformation = (
     const elProperty = rootProps.properties.splice(
       elIndex,
       1
-    )[0] as N.ObjectProperty
+    )[0] as ObjectProperty
     const elExpr = elProperty.value
     return j.callExpression(
       j.memberExpression(node, j.identifier('mount')),
@@ -93,7 +99,7 @@ export const transformAST: ASTTransformation = (
 
   if (includeMaybeComponents) {
     // new My().$mount
-    const new$mount = root.find(j.CallExpression, (n: N.CallExpression) => {
+    const new$mount = root.find(j.CallExpression, (n: CallExpression) => {
       return (
         j.MemberExpression.check(n.callee) &&
         j.NewExpression.check(n.callee.object) &&
@@ -104,8 +110,7 @@ export const transformAST: ASTTransformation = (
     new$mount.replaceWith(({ node }) => {
       const el = node.arguments[0]
 
-      const instance = (node.callee as N.MemberExpression)
-        .object as N.NewExpression
+      const instance = (node.callee as MemberExpression).object as NewExpression
       const ctor = instance.callee
 
       return j.callExpression(
@@ -140,7 +145,7 @@ export const transformAST: ASTTransformation = (
     })
 
     // new My({ el })
-    const newWithEl = root.find(j.NewExpression, (n: N.NewExpression) => {
+    const newWithEl = root.find(j.NewExpression, (n: NewExpression) => {
       return (
         n.arguments.length === 1 &&
         j.ObjectExpression.check(n.arguments[0]) &&
@@ -158,7 +163,7 @@ export const transformAST: ASTTransformation = (
     })
 
     newWithEl.replaceWith(({ node }) => {
-      const rootProps = node.arguments[0] as N.ObjectExpression
+      const rootProps = node.arguments[0] as ObjectExpression
       const elIndex = rootProps.properties.findIndex(
         p =>
           j.ObjectProperty.check(p) &&
@@ -170,7 +175,7 @@ export const transformAST: ASTTransformation = (
       const elProperty = rootProps.properties.splice(
         elIndex,
         1
-      )[0] as N.ObjectProperty
+      )[0] as ObjectProperty
       const elExpr = elProperty.value
 
       const ctor = node.callee

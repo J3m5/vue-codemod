@@ -1,4 +1,4 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import { getFixOperations } from '../../src/operationUtils'
 
 import {

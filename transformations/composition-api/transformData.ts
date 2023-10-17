@@ -2,12 +2,12 @@ import type {
   ASTPath,
   Identifier,
   JSCodeshift,
-  ObjectExpression,
   ObjectProperty
 } from 'jscodeshift'
 import j from 'jscodeshift'
-import type { ExportDefaultCollection, TransformParams } from './utils'
+import type { TransformParams } from './types'
 import { isKeyIdentifier } from './utils'
+import z from 'zod'
 
 const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
   const { value } = node
@@ -33,61 +33,56 @@ const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
   }
 }
 
-const filterData = (dataPropertyPath: ASTPath<ObjectExpression>) => {
-  const grandParent = dataPropertyPath.parent.value
+const schema = z.object({
+  key: z.object({
+    name: z.string().refine(name => name === 'data')
+  })
+})
+
+const filterData = (
+  dataPropertyPath: ASTPath<ObjectProperty>
+): dataPropertyPath is ASTPath<ObjectProperty & { key: Identifier }> => {
+  const grandParent = dataPropertyPath.parent.parent.value
 
   return (
     ['ArrowFunctionExpression', 'ReturnStatement'].includes(grandParent.type) ||
-    grandParent.key.name === 'data'
+    (schema.safeParse(grandParent).success &&
+      isKeyIdentifier(dataPropertyPath.value))
   )
 }
 
-const grandParentIsExport = (path: ASTPath<Identifier>) => {
-  return path.parent.parent.parent.value.type === 'ExportDefaultDeclaration'
-}
-
-const getDataCollection = (defaultExport: ExportDefaultCollection) => {
-  return defaultExport
-    .find(j.Identifier, { name: 'data' })
-    .filter(grandParentIsExport)
-    .map(path => path.parentPath)
-    .find(j.ObjectExpression)
-    .filter(filterData)
-    .map(path => path.get('properties') as ASTPath<ObjectProperty>[])
+const buildRef = (
+  name: string,
+  identifier: string,
+  refValue: Exclude<ReturnType<typeof getRefValue>, undefined>
+) => {
+  return j.variableDeclaration('const', [
+    j.variableDeclarator(
+      j.identifier(name),
+      j.callExpression(j.identifier(identifier), [refValue])
+    )
+  ])
 }
 
 export const transformData = ({
   defaultExport,
   collector
 }: TransformParams) => {
-  const dataCollection = getDataCollection(defaultExport)
+  defaultExport
+    .find(j.ObjectProperty)
+    .filter(filterData)
+    .forEach(dataPropPath => {
+      const refValue = getRefValue({ node: dataPropPath.value, j })
 
-  if (!dataCollection) return
+      if (!refValue) return []
 
-  const dataNodes = dataCollection.nodes().flat().filter(isKeyIdentifier)
-
-  if (!dataNodes.length) return
-
-  const refNodes = dataNodes.flatMap(dataProp => {
-    const refValue = getRefValue({ node: dataProp, j })
-
-    if (!refValue) return []
-
-    const { name } = dataProp.key
-    const identifier = j.ObjectExpression.check(refValue) ? 'reactive' : 'ref'
-    return [
-      [
-        name,
-        j.variableDeclaration('const', [
-          j.variableDeclarator(
-            j.identifier(name),
-            j.callExpression(j.identifier(identifier), [refValue])
-          )
-        ])
-      ]
-    ] as const
-  })
-
-  if (!refNodes.length) return
-  collector.nodes.data = new Map(refNodes)
+      const { name } = dataPropPath.value.key
+      if (j.ObjectExpression.check(refValue)) {
+        const ref = buildRef(name, 'reactive', refValue)
+        collector.nodes.reactive.set(name, ref)
+        return
+      }
+      const ref = buildRef(name, 'ref', refValue)
+      collector.nodes.ref.set(name, ref)
+    })
 }

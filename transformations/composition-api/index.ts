@@ -7,24 +7,29 @@ import { transformData } from './transformData'
 import { transformMethods } from './transformMethods'
 import { transformProps } from './transformProps'
 
+import { addImports } from './addImports'
 import { transformFilters } from './filters'
 import { insertNodes } from './insertNodes'
 import { transformRefs } from './tranformRefs'
+import { transformLifeCycle } from './transformLifecycle'
 import { removeThis } from './transformThis'
 import { transformWatchers } from './transformWatchers'
-import { Collector } from './utils'
-import { addImports } from './addImports'
+import type { Collector } from './types'
 
 const getCollector = (): Collector => ({
   nodes: {
     imports: [],
     props: [],
-    data: new Map(),
     ref: new Map(),
+    reactive: new Map(),
+    $refs: new Map(),
     computed: new Map(),
     method: new Map(),
-    watch: []
+    watch: [],
+    lifecycleHooks: new Map(),
+    routerHooks: new Map()
   },
+  comments: new Map(),
   propsNames: []
 })
 
@@ -38,6 +43,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   transformData({ defaultExport, collector })
 
   transformRefs({ defaultExport, collector })
+
   transformMethods({ defaultExport, collector })
 
   transformFilters({ defaultExport, collector })
@@ -46,11 +52,14 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
   transformWatchers({ defaultExport, collector })
 
-  removeThis(defaultExport, collector)
+  transformLifeCycle({ defaultExport, collector })
+
+  removeThis({ defaultExport, collector })
 
   addImports({ defaultExport, collector })
 
-  insertNodes({ defaultExport, collector })
+  insertNodes({ defaultExport, collector, root })
+
   defaultExport.remove()
 
   cntFunc()

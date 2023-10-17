@@ -1,6 +1,6 @@
 import type { Transform } from 'jscodeshift'
 import runTransformation from '../runTransformation'
-import { StatementKind } from 'ast-types/lib/gen/kinds'
+import type { StatementKind } from 'ast-types/lib/gen/kinds'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')

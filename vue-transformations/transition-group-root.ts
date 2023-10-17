@@ -1,5 +1,7 @@
 import type { Node } from 'vue-eslint-parser/ast/nodes'
-import { insertTextAt, type Operation } from '../src/operationUtils'
+import { insertTextAt } from '../src/operationUtils'
+import type { Operation } from '../src/operationUtils'
+
 import createDebug from 'debug'
 import {
   default as wrap,

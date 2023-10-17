@@ -1,10 +1,13 @@
 <template>
-  <div ref="titleDiv">
+  <div>
     {{ title }}
   </div>
 </template>
-
 <script>
+/**
+ * const machin = 'test'
+ */
+
 export default {
   name: 'Test',
   props: {
@@ -13,7 +16,7 @@ export default {
       type: String
     }
   },
-  data: () => ({
+  data: {
     subtitle: 'test',
     undef: undefined,
     nan: NaN,
@@ -22,13 +25,60 @@ export default {
     loading: true,
     obj: { a: 1 },
     arr: [1]
-  }),
+  },
+  mounted() {
+    console.log(this.$refs.titleDiv)
+  },
+  beforeCreate() {
+    console.log(this.$refs.titleDiv)
+  },
+  created() {
+    console.log(this.$refs.titleDiv)
+  },
+  beforeMount() {
+    console.log(this.$refs.titleDiv)
+  },
+  beforeUpdate() {
+    console.log(this.$refs.titleDiv)
+  },
+  updated() {
+    console.log(this.$refs.titleDiv)
+  },
+  activated() {
+    console.log(this.$refs.titleDiv)
+  },
+  deactivated() {
+    console.log(this.$refs.titleDiv)
+  },
+  beforeDestroy() {
+    console.log(this.$refs.titleDiv)
+  },
+  errorCaptured() {
+    console.log(this.$refs.titleDiv)
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log(vm)
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    next(vm => {
+      console.log(vm)
+    })
+  },
+  beforeRouteUpdate(to, from, next) {
+    next(vm => {
+      console.log(vm)
+    })
+  },
   watch: {
     title(val, oldVal) {
       console.log(val, oldVal)
+      this.$router.push('/')
     },
     undef: (val, oldVal) => {
       console.log(val, oldVal)
+      console.log(this.$route.name)
     },
     nan: (val, oldVal) => console.log(val, oldVal),
     num: {
@@ -72,6 +122,7 @@ export default {
     async start() {
       console.log(this.$refs.titleDiv)
       this.loading = false
+      this.obj.a = 2
     },
     finish: async bool => {
       this.loading = bool

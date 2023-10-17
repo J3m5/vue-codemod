@@ -1,11 +1,12 @@
-import jscodeshift, { Transform, Parser, FileInfo } from 'jscodeshift'
+import type { FileInfo, Parser, Transform } from 'jscodeshift'
+import jscodeshift from 'jscodeshift'
 
+import createDebug from 'debug'
 // @ts-ignore
 import getParser from 'jscodeshift/src/getParser'
-import createDebug from 'debug'
 
-import { parse as parseSFC, stringify as stringifySFC } from './sfcUtils'
 import type { SFCDescriptor } from './sfcUtils'
+import { parse as parseSFC, stringify as stringifySFC } from './sfcUtils'
 
 import VueTransformation from './VueTransformation'
 

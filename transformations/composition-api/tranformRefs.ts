@@ -1,5 +1,5 @@
 import j from 'jscodeshift'
-import { TransformParams } from './utils'
+import type { TransformParams } from './types'
 
 const buildRef = (ref: string) => {
   return j.variableDeclaration('const', [
@@ -26,9 +26,9 @@ export const transformRefs = ({
 
     const { name } = property
 
-    if (!collector.nodes.ref.get(name)) {
-      const ref = buildRef(name)
-      collector.nodes.ref.set(name, ref)
-    }
+    if (collector.nodes.$refs.has(name)) return
+
+    const ref = buildRef(name)
+    collector.nodes.$refs.set(name, ref)
   })
 }

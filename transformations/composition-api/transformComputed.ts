@@ -1,5 +1,5 @@
 import j from 'jscodeshift'
-import type { TransformParams } from './utils'
+import type { TransformParams } from './types'
 import {
   findObjectProperty,
   get,

@@ -1,7 +1,7 @@
-import { table } from 'table'
 import cliProgress from 'cli-progress'
-import { ASTNode, ASTPath } from 'jscodeshift'
-import { Node as EslintNode } from 'vue-eslint-parser/ast/nodes'
+import type { ASTNode, ASTPath } from 'jscodeshift'
+import { table } from 'table'
+import type { Node as EslintNode } from 'vue-eslint-parser/ast/nodes'
 
 export const cliInstance = new cliProgress.SingleBar(
   {

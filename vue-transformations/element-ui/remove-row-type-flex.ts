@@ -1,5 +1,7 @@
 import type { Node } from 'vue-eslint-parser/ast/nodes'
-import { remove, type Operation } from '../../src/operationUtils'
+import { remove } from '../../src/operationUtils'
+import type { Operation } from '../../src/operationUtils'
+
 import {
   createTransformAST,
   default as wrap

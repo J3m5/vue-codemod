@@ -1,6 +1,7 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import { getText, replaceText } from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
+
 import {
   default as wrap,
   createTransformAST

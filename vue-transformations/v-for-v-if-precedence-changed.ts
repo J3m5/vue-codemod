@@ -2,9 +2,10 @@ import type { Node, VAttribute, VDirective } from 'vue-eslint-parser/ast/nodes'
 import {
   insertTextAfter,
   insertTextBefore,
-  remove,
-  type Operation
+  remove
 } from '../src/operationUtils'
+import type { Operation } from '../src/operationUtils'
+
 import {
   createTransformAST,
   default as wrap

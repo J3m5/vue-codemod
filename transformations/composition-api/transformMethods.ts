@@ -7,7 +7,7 @@ import {
   isFunction
 } from './utils'
 
-import type { TransformParams } from './utils'
+import type { TransformParams } from './types'
 
 export const transformMethods = ({
   defaultExport,

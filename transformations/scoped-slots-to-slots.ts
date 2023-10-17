@@ -1,7 +1,7 @@
-import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import wrap from '../src/wrapAstTransformation'
 
-import type * as N from 'jscodeshift'
+import type { Identifier } from 'jscodeshift'
 import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ j, root }) => {
@@ -13,7 +13,7 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
     }
   })
   dotScopedSlots.forEach(({ node }) => {
-    (node.property as N.Identifier).name = '$slots'
+    ;(node.property as Identifier).name = '$slots'
     cntFunc()
   })
 

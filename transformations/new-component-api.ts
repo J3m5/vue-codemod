@@ -1,11 +1,11 @@
-import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation } from '../src/wrapAstTransformation'
-import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
+import type { ExpressionKind } from 'ast-types/gen/kinds'
+import type { SpreadElement } from 'jscodeshift'
+import { camelCase, upperFirst } from 'lodash'
 import type { GlobalApi } from '../src/global'
-import { upperFirst, camelCase } from 'lodash'
 import { getCntFunc } from '../src/report'
-import { SpreadElement } from 'jscodeshift'
-import { ExpressionKind } from 'ast-types/gen/kinds'
+import type { ASTTransformation } from '../src/wrapAstTransformation'
+import wrap from '../src/wrapAstTransformation'
+import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context

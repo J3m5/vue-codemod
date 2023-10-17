@@ -1,7 +1,9 @@
 import createDebug from 'debug'
 import { inspect } from 'util'
 import type { Node } from 'vue-eslint-parser/ast/nodes'
-import { insertTextAfter, remove, type Operation } from '../src/operationUtils'
+import type { Operation } from '../src/operationUtils'
+import { insertTextAfter, remove } from '../src/operationUtils'
+
 import {
   createTransformAST,
   default as wrap

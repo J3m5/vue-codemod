@@ -1,10 +1,7 @@
 import type { Node } from 'vue-eslint-parser/ast/nodes'
-import {
-  insertTextBefore,
-  remove,
-  removeRange,
-  type Operation
-} from '../src/operationUtils'
+import type { Operation } from '../src/operationUtils'
+import { insertTextBefore, remove, removeRange } from '../src/operationUtils'
+
 import {
   createTransformAST,
   default as wrap

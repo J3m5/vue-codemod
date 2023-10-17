@@ -1,6 +1,5 @@
-import j from 'jscodeshift'
-
 import type {
+  ASTPath,
   ArrowFunctionExpression,
   Identifier,
   ObjectMethod,
@@ -9,15 +8,13 @@ import type {
   SpreadElement,
   SpreadProperty
 } from 'jscodeshift'
-
+import j from 'jscodeshift'
+import type { Collector, ObjectFunction, TransformParams } from './types'
 import {
   findObjectProperty,
-  get,
   getFunctionBuilderParams,
   isFunction
 } from './utils'
-
-import type { Collector, TransformParams } from './utils'
 
 const buildWatcher = (
   watchSource: Identifier | ArrowFunctionExpression,
@@ -54,10 +51,23 @@ export const transformWatchers = ({
   collector
 }: TransformParams) => {
   const watchCollection = findObjectProperty(defaultExport, 'watch')
+    .find(j.BlockStatement)
+    .filter(path => {
+      return (
+        j.Identifier.check(path.parent.key) &&
+        (j.ObjectMethod.check(path.parent.type) ||
+          j.ArrowFunctionExpression.check(path.parent.type))
+      )
+    })
+    .map(path => {
+      return path.parent.parent as ASTPath<ObjectFunction>
+    })
 
   if (!watchCollection.length) return
 
-  const functionNodes = get(watchCollection).properties.filter(isFunction)
+  const functionNodes = watchCollection.nodes()
+
+  // Handle the object method syntax
   if (functionNodes.length) {
     const watcherNodes = functionNodes.map(handlerNode => {
       const handlerBuilderParams = getFunctionBuilderParams(handlerNode, true)
@@ -66,6 +76,8 @@ export const transformWatchers = ({
     })
     collector.nodes.watch.push(...watcherNodes)
   }
+
+  // Handle the object handler syntax
   const watcherNodes = watchCollection
     .find(j.ObjectProperty, { value: { type: 'ObjectExpression' } })
     .filter(path => path.parent.parent.value.key.name === 'watch')

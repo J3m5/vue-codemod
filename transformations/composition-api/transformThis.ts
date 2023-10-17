@@ -1,51 +1,88 @@
-import type { Collection, MemberExpression } from 'jscodeshift'
+import type {
+  ASTPath,
+  CallExpression,
+  Identifier,
+  MemberExpression
+} from 'jscodeshift'
 import j from 'jscodeshift'
-import { Collector } from './utils'
+import type { TransformParams } from './types'
 
-const isVM = (node: MemberExpression) =>
-  j.Identifier.check(node.object) &&
-  'name' in node.object &&
-  node.object.name === 'vm'
+type VMNode = MemberExpression & {
+  object: Identifier & { name: 'vm' }
+  property: { name: string }
+}
 
-const isThis = (node: MemberExpression) => j.ThisExpression.check(node.object)
+type ThisNode = MemberExpression & {
+  object: j.ThisExpression
+  property: { name: string }
+}
 
-export const removeThis = (collection: Collection, collector: Collector) => {
-  collection.find(j.MemberExpression).forEach(path => {
-    if (!('name' in path.value.property)) return
-    const { name } = path.value.property
-    if (typeof name !== 'string') return
-    if (!(isVM(path.value) || isThis(path.value))) {
-      return
-    }
+type ThisOrVMNode = ASTPath<ThisNode | VMNode>
 
-    const refNode = j.identifier(name)
-    if (
-      collector.nodes.data.get(name) ||
-      collector.nodes.ref.get(name) ||
-      collector.nodes.computed.get(name)
-    ) {
-      const refValueNode = j.memberExpression(refNode, j.identifier('value'))
-      path.replace(refValueNode)
-    }
-    if (collector.propsNames.includes(name)) {
-      const refValueNode = j.memberExpression(j.identifier('props'), refNode)
-      path.replace(refValueNode)
-    }
-  })
+const isThisOrVM = (path: ASTPath<MemberExpression>): path is ThisOrVMNode =>
+  j.ThisExpression.check(path.value.object) ||
+  (j.Identifier.check(path.value.object) && path.value.object.name === 'vm')
 
-  collection.find(j.CallExpression).forEach(path => {
-    if (
-      !j.MemberExpression.check(path.value.callee) ||
-      !j.Identifier.check(path.value.callee.property)
-    )
-      return
-    const name = path.value.callee.property.name
-    if (collector.nodes.method.get(name)) {
-      const refValueNode = j.expressionStatement(
-        j.callExpression(j.identifier(name), path.value.arguments)
+export const removeThis = ({ defaultExport, collector }: TransformParams) => {
+  // Handle this, vm, props, store ands router access
+  defaultExport
+    .find(j.MemberExpression)
+    .filter((path): path is ThisOrVMNode => {
+      return (
+        'name' in path.value.property &&
+        typeof path.value.property.name === 'string' &&
+        isThisOrVM(path)
       )
+    })
+    .forEach(path => {
+      const { name } = path.value.property
 
-      path.replace(refValueNode)
+      const refNode = j.identifier(name)
+
+      if (
+        collector.nodes.ref.has(name) ||
+        collector.nodes.$refs.has(name) ||
+        collector.nodes.computed.has(name)
+      ) {
+        const refValueNode = j.memberExpression(refNode, j.identifier('value'))
+        path.replace(refValueNode)
+      }
+
+      if (collector.propsNames.includes(name)) {
+        const refValueNode = j.memberExpression(j.identifier('props'), refNode)
+        path.replace(refValueNode)
+      }
+
+      if (['$router', '$route', '$store'].includes(name)) {
+        const newName = name.slice(1)
+        const refValueNode = j.identifier(newName)
+        path.replace(refValueNode)
+      }
+    })
+
+  type CallMethodPath = ASTPath<
+    CallExpression & {
+      callee: MemberExpression & { property: Identifier }
     }
-  })
+  >
+
+  // Handle methods call
+  defaultExport
+    .find(j.CallExpression)
+    .filter((path): path is CallMethodPath => {
+      return (
+        j.MemberExpression.check(path.value.callee) &&
+        j.Identifier.check(path.value.callee.property)
+      )
+    })
+    .forEach(path => {
+      const { name } = path.value.callee.property
+      if (collector.nodes.method.has(name)) {
+        const refValueNode = j.expressionStatement(
+          j.callExpression(j.identifier(name), path.value.arguments)
+        )
+
+        path.replace(refValueNode)
+      }
+    })
 }

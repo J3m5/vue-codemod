@@ -6,7 +6,7 @@ import path from 'node:path'
 import transformationMap from '../transformations'
 import vueTransformationMap from '../vue-transformations'
 import runTransformation from './runTransformation'
-import { test, expect, describe } from 'bun:test'
+import { test, expect, describe } from 'vitest'
 
 export type FileInfo =
   | { path?: string; source: string }
@@ -67,6 +67,7 @@ function runInlineTest(
   testOptions?: TestOptions
 ) {
   const output = applyTransform(module, input, options, testOptions)
+
   expect(output).toEqual(expectedOutput.trim())
   return output
 }
