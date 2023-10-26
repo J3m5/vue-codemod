@@ -14,7 +14,14 @@ const addVueImports = ({ collector }: Pick<TransformParams, 'collector'>) => {
     const nodes = collector.nodes[key]
     return Array.isArray(nodes) ? nodes.length : nodes.size
   })
-  const lifecycleKeys = Object.values(hooks.lifecycle)
+
+  const lifecycleKeys = (
+    Object.keys(hooks.lifecycle) as (keyof typeof hooks.lifecycle)[]
+  )
+    .filter(key => {
+      return collector.nodes.lifecycleHooks.has(key)
+    })
+    .map(key => hooks.lifecycle[key])
 
   const imports = buildImport([...importKeys, ...lifecycleKeys], 'vue')
 
@@ -23,7 +30,7 @@ const addVueImports = ({ collector }: Pick<TransformParams, 'collector'>) => {
 
 const routerImports = ['onBeforeRouteUpdate', 'onBeforeRouteLeave'] as const
 
-const addRouterImports = ({ collector, defaultExport }: TransformParams) => {
+const addRouterImports = ({ collector }: TransformParams) => {
   const importKeys = routerImports.filter(key => {
     return collector.nodes.routerHooks.has(key)
   })
@@ -33,8 +40,6 @@ const addRouterImports = ({ collector, defaultExport }: TransformParams) => {
   const imports = buildImport(importKeys, 'vue-router')
 
   collector.nodes.imports.push(imports)
-
-  defaultExport.find(j.MemberExpression)
 }
 
 export const addImports = ({ collector, defaultExport }: TransformParams) => {
