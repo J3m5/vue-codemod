@@ -5,6 +5,7 @@ const API_PORT = process.env.API_PORT || 3002
 
 export default defineConfig({
   server: {
+    port: 3001,
     proxy: {
       '/api': {
         target: `http://localhost:${API_PORT}/`,
