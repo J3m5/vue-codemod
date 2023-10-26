@@ -8,7 +8,7 @@ import type {
   RootNode,
   SourceLocation
 } from '@vue/compiler-core'
-import CompilerDom from '@vue/compiler-dom'
+import * as CompilerDom from '@vue/compiler-dom'
 import type { Statement } from 'jscodeshift'
 import { LRUCache } from 'lru-cache'
 import type { RawSourceMap } from 'source-map'

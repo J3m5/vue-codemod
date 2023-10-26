@@ -10,7 +10,8 @@ import {
 import { resolve } from 'node:path'
 import Module from 'module'
 
-import * as yargs from 'yargs'
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 import * as globby from 'globby'
 
 import createDebug from 'debug'
@@ -36,7 +37,7 @@ const {
   runAllTransformation: runAllTransformation,
   reportFormatter: formatter,
   params
-} = yargs
+} = yargs(hideBin(process.argv))
   .usage('Usage: vue-codemod [file pattern] <option>')
   .option('transformation', {
     alias: 't',

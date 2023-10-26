@@ -17,6 +17,5 @@ export const insertNodes = ({
 
   defaultExport.insertBefore(nodes)
 
-  console.log(root.find(j.CommentBlock))
   root.find(j.Program).nodes()[0].comments = [...collector.comments.values()]
 }
