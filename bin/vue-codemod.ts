@@ -126,10 +126,10 @@ async function main() {
       transformationName,
       transformationModule
     )
-    if (packageTransform()) {
-      processFilePath.push('package.json')
-      global.outputReport['package transformation'] = 1
-    }
+    // if (packageTransform()) {
+    //   processFilePath.push('package.json')
+    //   global.outputReport['package transformation'] = 1
+    // }
   }
 
   if (runAllTransformation) {

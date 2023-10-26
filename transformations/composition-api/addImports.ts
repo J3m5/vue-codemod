@@ -15,6 +15,8 @@ const addVueImports = ({ collector }: Pick<TransformParams, 'collector'>) => {
     return Array.isArray(nodes) ? nodes.length : nodes.size
   })
 
+  console.log([...collector.nodes.lifecycleHooks.keys()])
+
   const lifecycleKeys = (
     Object.keys(hooks.lifecycle) as (keyof typeof hooks.lifecycle)[]
   )

@@ -26,6 +26,7 @@ export const hooks = {
     beforeRouteLeave: 'onBeforeRouteLeave'
   }
 } as const
+
 type HookPath<K> = ASTPath<
   ObjectMethod & {
     key: Identifier & { name: keyof K }
