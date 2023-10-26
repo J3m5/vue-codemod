@@ -22,7 +22,7 @@ import { excludedTransformations } from '../transformations'
 import vueTransformations from '../vue-transformations'
 import { excludedVueTransformations } from '../vue-transformations'
 import runTransformation from '../src/runTransformation'
-import { transform as packageTransform } from '../src/packageTransformation'
+// import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
 import { formatterOutput, cliInstance } from '../src/report'
@@ -161,10 +161,10 @@ async function main() {
         )
       }
     }
-    if (packageTransform()) {
-      processFilePath.push('package.json')
-      global.outputReport['package transformation'] = 1
-    }
+    // if (packageTransform()) {
+    //   processFilePath.push('package.json')
+    //   global.outputReport['package transformation'] = 1
+    // }
   }
   cliInstance.update(cliInstance.getTotal(), {
     process: 'Transformation finished! '
