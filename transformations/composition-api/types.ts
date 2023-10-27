@@ -10,8 +10,9 @@ import type {
   ObjectExpression,
   ObjectMethod,
   ObjectProperty,
-  VariableDeclaration
+  VariableDeclaration,
 } from 'jscodeshift'
+import type { Params } from '../../src/wrapAstTransformation'
 
 export type Imports = 'vue' | 'vue-router' | 'vuex'
 
@@ -39,6 +40,7 @@ export type ExportDefaultCollection = Collection<ExportDefaultDeclaration>
 export interface TransformParams {
   defaultExport: ExportDefaultCollection
   collector: Collector
+  params?: Params
 }
 
 export interface ObjectMethodWithKey extends ObjectMethod {

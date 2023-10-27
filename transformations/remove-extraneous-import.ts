@@ -4,7 +4,7 @@ import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
 const getSpecifier = ({
   root,
   j,
-  localBinding
+  localBinding,
 }: {
   root: Context['root']
   j: Context['j']
@@ -16,8 +16,8 @@ const getSpecifier = ({
 
   const namedImportCollection = root.find(j.ImportSpecifier, {
     local: {
-      name: localBinding
-    }
+      name: localBinding,
+    },
   })
 
   if (namedImportCollection.length) {
@@ -25,8 +25,8 @@ const getSpecifier = ({
   }
   const importDefaultCollection = root.find(j.ImportDefaultSpecifier, {
     local: {
-      name: localBinding
-    }
+      name: localBinding,
+    },
   })
   if (importDefaultCollection.length) {
     return importDefaultCollection
@@ -34,8 +34,8 @@ const getSpecifier = ({
 
   const importNamespaceCollection = root.find(j.ImportNamespaceSpecifier, {
     local: {
-      name: localBinding
-    }
+      name: localBinding,
+    },
   })
   if (importNamespaceCollection.length) {
     return importNamespaceCollection
@@ -50,13 +50,13 @@ const getSpecifier = ({
  * if `foo` is unused, the statement would become `import 'bar'`.
  * It is because we are not sure if the module contains any side effects.
  */
-export const transformAST: ASTTransformation = (
+export const transformAST: ASTTransformation<{ localBinding?: string }> = (
   { root, j }: Context,
-  { localBinding }: { localBinding?: string } = {}
+  { localBinding } = {},
 ) => {
   const usages = root
     .find(j.Identifier, { name: localBinding })
-    .filter(identifierPath => {
+    .filter((identifierPath) => {
       const parent = identifierPath.parent.node
 
       // Ignore the import specifier
@@ -105,7 +105,7 @@ export const transformAST: ASTTransformation = (
       'vue',
       'vue-router',
       'vuex',
-      '@vue/composition-api'
+      '@vue/composition-api',
     ]
     if (
       peerSpecifiers.length === 1 &&

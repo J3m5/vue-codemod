@@ -12,8 +12,8 @@ export type Params = {
   [param: string]: string | boolean | number | undefined | string[] | Params
 }
 
-export type ASTTransformation = {
-  (context: Context, params?: Params): void
+export type ASTTransformation<OtherParams = object> = {
+  (context: Context, params?: Params & OtherParams): void
 }
 
 global.subRules = {}
@@ -25,7 +25,7 @@ const parseSource = (file: FileInfo, j: JSCodeshift) => {
     cliInstance.stop()
     console.error(
       `JSCodeshift failed to parse ${file.path},` +
-        ` please check whether the syntax is valid`
+        ` please check whether the syntax is valid`,
     )
   }
 }
@@ -43,7 +43,7 @@ const getTransformFile =
   }
 
 const astTransformationToJSCodeshiftModule = (
-  transformAST: ASTTransformation
+  transformAST: ASTTransformation,
 ) => getTransformFile(transformAST)
 
 export default astTransformationToJSCodeshiftModule

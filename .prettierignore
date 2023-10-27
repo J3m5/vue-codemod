@@ -2,16 +2,10 @@
 bin/__tests__
 dist
 node_modules
-playground
 .editorconfig
-.eslintignore
-.eslintrc.js
 .gitignore
-.prettierignore
-.prettierrc
 LICENSE
 package.json
 README.md
-tsconfig.json
 yarn.lock
 coverage

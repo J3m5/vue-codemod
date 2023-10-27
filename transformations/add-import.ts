@@ -1,5 +1,5 @@
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
+import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 type DefaultSpecifierParam = {
   type: 'default'
@@ -25,9 +25,9 @@ type Params = {
   source?: string
 }
 
-export const transformAST: ASTTransformation = (
-  { root, j }: Context,
-  params: Params = {}
+export const transformAST: ASTTransformation<Params> = (
+  { root, j },
+  params = {},
 ) => {
   let localBinding: string | undefined
   if (params?.specifier?.type === 'named') {
@@ -41,10 +41,11 @@ export const transformAST: ASTTransformation = (
   }
 
   const duplicate = root.find(j.ImportDeclaration, {
-    specifiers: arr => !!arr?.some(s => s && s?.local?.name === localBinding),
+    specifiers: (arr) =>
+      !!arr?.some((s) => s && s?.local?.name === localBinding),
     source: {
-      value: params?.source
-    }
+      value: params?.source,
+    },
   })
   if (duplicate.length) {
     return
@@ -53,12 +54,12 @@ export const transformAST: ASTTransformation = (
   let newImportSpecifier
   if (params?.specifier?.type === 'default') {
     newImportSpecifier = j.importDefaultSpecifier(
-      j.identifier(params?.specifier.local)
+      j.identifier(params?.specifier.local),
     )
   } else if (params?.specifier?.type === 'named') {
     newImportSpecifier = j.importSpecifier(
       j.identifier(params?.specifier.imported),
-      j.identifier(localBinding)
+      j.identifier(localBinding),
     )
   } else {
     // namespace
@@ -67,8 +68,8 @@ export const transformAST: ASTTransformation = (
 
   const matchedDecl = root.find(j.ImportDeclaration, {
     source: {
-      value: params.source
-    }
+      value: params.source,
+    },
   })
   if (
     matchedDecl.length &&
@@ -79,7 +80,7 @@ export const transformAST: ASTTransformation = (
   } else if (params.source) {
     const newImportDecl = j.importDeclaration(
       [newImportSpecifier],
-      j.stringLiteral(params.source)
+      j.stringLiteral(params.source),
     )
 
     const lastImportDecl = root.find(j.ImportDeclaration).at(-1)

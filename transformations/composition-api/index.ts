@@ -27,18 +27,20 @@ const getCollector = (): Collector => ({
     method: new Map(),
     watch: [],
     lifecycleHooks: new Map(),
-    routerHooks: new Map()
+    routerHooks: new Map(),
   },
   comments: new Map(),
-  propsNames: []
+  propsNames: [],
 })
 
-export const transformAST: ASTTransformation = ({ root, j }) => {
-  const cntFunc = getCntFunc('props', global.outputReport)
+export const transformAST: ASTTransformation = ({ root, j }, params) => {
+  const cntFunc = getCntFunc('api-composition', global.outputReport)
+
   const collector = getCollector()
+
   const defaultExport = root.find(j.ExportDefaultDeclaration)
 
-  transformProps({ defaultExport, collector })
+  transformProps({ defaultExport, collector, params })
 
   transformData({ defaultExport, collector })
 

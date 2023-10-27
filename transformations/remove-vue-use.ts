@@ -8,29 +8,28 @@
  * and the `Vue.use` statements can be just abandoned.
  */
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
+import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
-export const transformAST: ASTTransformation = (
-  context: Context,
-  params?: { removablePlugins?: string[] }
-) => {
+export const transformAST: ASTTransformation<{
+  removablePlugins?: string[]
+}> = (context, params) => {
   const { j, root } = context
   const vueUseCalls = root.find(j.CallExpression, {
     callee: {
       type: 'MemberExpression',
       object: {
-        name: 'Vue'
+        name: 'Vue',
       },
       property: {
-        name: 'use'
-      }
-    }
+        name: 'use',
+      },
+    },
   })
 
   const removedPlugins: string[] = []
   const removableUseCalls = vueUseCalls
-    .filter(path => path.parent.parent.value.type === 'Program')
+    .filter((path) => path.parent.parent.value.type === 'Program')
     .filter(({ node }) => {
       if (j.Identifier.check(node.arguments[0])) {
         const plugin = node.arguments[0].name
@@ -49,10 +48,10 @@ export const transformAST: ASTTransformation = (
 
   removableUseCalls.remove()
 
-  removedPlugins.forEach(name =>
+  removedPlugins.forEach((name) =>
     removeExtraneousImport(context, {
-      localBinding: name
-    })
+      localBinding: name,
+    }),
   )
 }
 

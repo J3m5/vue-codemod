@@ -1,5 +1,5 @@
 import wrap from '../src/wrapAstTransformation'
-import type { Context } from '../src/wrapAstTransformation'
+import type { ASTTransformation } from '../src/wrapAstTransformation'
 import createDebug from 'debug'
 import { transformAST as addImportTransformAST } from './add-import'
 
@@ -9,14 +9,11 @@ const debug = createDebug('vue-codemod:rule')
  * Expected to be run after the `createApp` transformation.
  * Transforms expressions like `createApp({ router })` to `createApp().use(router)`
  */
-export const transformAST = (
-  { root, j, filename }: Context,
-  params?: {
-    rootPropName?: string
-    isGlobalApi?: boolean
-  }
-) => {
-  const appRoots = root.find(j.CallExpression, node => {
+export const transformAST: ASTTransformation<{
+  rootPropName?: string
+  isGlobalApi?: boolean
+}> = ({ root, j, filename }, params) => {
+  const appRoots = root.find(j.CallExpression, (node) => {
     if (
       (node.arguments.length === 1 &&
         j.ObjectExpression.check(node.arguments[0])) ||
@@ -62,17 +59,17 @@ export const transformAST = (
         {
           specifier: {
             type: 'default',
-            local: api.name
+            local: api.name,
           },
-          source: '../' + api.path
-        }
+          source: '../' + api.path,
+        },
       )
 
       // add use
       appRoots.replaceWith(({ node: createAppCall }) => {
         return j.callExpression(
           j.memberExpression(createAppCall, j.identifier('use')),
-          [j.identifier(api.name)]
+          [j.identifier(api.name)],
         )
       })
     }
@@ -92,7 +89,8 @@ export const transformAST = (
     }
 
     const propertyIndex = rootProps.properties.findIndex(
-      p => 'key' in p && 'name' in p.key && p.key.name === params.rootPropName
+      (p) =>
+        'key' in p && 'name' in p.key && p.key.name === params.rootPropName,
     )
 
     if (propertyIndex === -1) {
@@ -108,7 +106,7 @@ export const transformAST = (
 
     return j.callExpression(
       j.memberExpression(createAppCall, j.identifier('use')),
-      [property.value]
+      [property.value],
     )
   })
 }

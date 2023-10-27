@@ -13,6 +13,7 @@
 
     // "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
   
     /* If transpiling with TypeScript: */
     "moduleResolution": "NodeNext",
@@ -24,11 +25,9 @@
     "lib": ["es2022"],
 
     /* If you're building for a library: */
-    "declaration": true,
-    "removeComments": false,
-
-    "types": ["jest", "jscodeshift", "node", "ast-types", "bun-types"],
-    "rootDir": "."
+    "composite": true,
+    "incremental": true,
+    "types": ["jest", "jscodeshift", "node", "ast-types", "bun-types"]
   },
   "exclude": ["dist", "playground", "node_modules"]
 }

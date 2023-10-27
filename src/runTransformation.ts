@@ -1,8 +1,7 @@
 import type { FileInfo, Parser, Transform } from 'jscodeshift'
 import jscodeshift from 'jscodeshift'
-
 import createDebug from 'debug'
-// @ts-ignore
+// @ts-expect-error
 import getParser from 'jscodeshift/src/getParser'
 
 import type { SFCDescriptor } from './sfcUtils'
@@ -68,9 +67,8 @@ export default function runTransformation(
       debug('skip .vue files without template block.')
       return source
     }
-    const contentStart: number =
-      descriptor.template.ast.children[0].loc.start.offset
-    const contentEnd: number =
+    const contentStart = descriptor.template.ast.children[0].loc.start.offset
+    const contentEnd =
       descriptor.template.ast.children[
         descriptor.template.ast.children.length - 1
       ].loc.end.offset + 1

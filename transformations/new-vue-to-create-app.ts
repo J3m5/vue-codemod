@@ -6,7 +6,7 @@ import type {
   NewExpression,
   CallExpression,
   MemberExpression,
-  ObjectExpression
+  ObjectExpression,
 } from 'jscodeshift'
 import { getCntFunc } from '../src/report'
 
@@ -20,11 +20,11 @@ type Params = {
 // FIXME: for ES modules, should use `createApp` instead of `Vue.createApp`
 // because the latter makes it difficult to tree-shake the vue module
 // FIXME: need to ensure there will be a Vue import if needed.
-export const transformAST: ASTTransformation = (
+export const transformAST: ASTTransformation<Params> = (
   context,
-  params: Params = {
-    includeMaybeComponents: true
-  }
+  params = {
+    includeMaybeComponents: true,
+  },
 ) => {
   const { j, root } = context
   const { includeMaybeComponents = true } = params
@@ -33,8 +33,8 @@ export const transformAST: ASTTransformation = (
     .find(j.NewExpression, {
       callee: {
         type: 'Identifier',
-        name: 'Vue'
-      }
+        name: 'Vue',
+      },
     })
     .filter(({ node }) => {
       return node.arguments.length > 0
@@ -46,13 +46,13 @@ export const transformAST: ASTTransformation = (
     const rootProps = node.arguments
     return j.callExpression(
       j.memberExpression(j.identifier('Vue'), j.identifier('createApp')),
-      rootProps
+      rootProps,
     )
   })
 
   const vueCreateApp = newVue
   // Vue.createApp().$mount() -> Vue.createApp().mount()
-  vueCreateApp.forEach(path => {
+  vueCreateApp.forEach((path) => {
     const parentNode = path.parent.node
     if (
       j.MemberExpression.check(parentNode) &&
@@ -75,10 +75,10 @@ export const transformAST: ASTTransformation = (
 
     const rootProps = node.arguments[0]
     const elIndex = rootProps.properties.findIndex(
-      p =>
+      (p) =>
         j.ObjectProperty.check(p) &&
         j.Identifier.check(p.key) &&
-        p.key.name === 'el'
+        p.key.name === 'el',
     )
 
     if (elIndex === -1) {
@@ -87,13 +87,13 @@ export const transformAST: ASTTransformation = (
 
     const elProperty = rootProps.properties.splice(
       elIndex,
-      1
+      1,
     )[0] as ObjectProperty
     const elExpr = elProperty.value
     return j.callExpression(
       j.memberExpression(node, j.identifier('mount')),
       // @ts-ignore I'm not sure what the edge cases are
-      [elExpr]
+      [elExpr],
     )
   })
 
@@ -119,12 +119,12 @@ export const transformAST: ASTTransformation = (
             j.memberExpression(j.identifier('Vue'), j.identifier('createApp')),
             [
               ctor,
-              ...instance.arguments // additional props
-            ]
+              ...instance.arguments, // additional props
+            ],
           ),
-          j.identifier('mount')
+          j.identifier('mount'),
         ),
-        [el]
+        [el],
       )
     })
 
@@ -134,10 +134,10 @@ export const transformAST: ASTTransformation = (
         type: 'MemberExpression',
         property: {
           type: 'Identifier',
-          name: '$mount'
-        }
+          name: '$mount',
+        },
       },
-      arguments: args => args.length === 1
+      arguments: (args) => args.length === 1,
     })
     $mount.forEach(({ node }) => {
       // @ts-ignore
@@ -150,14 +150,14 @@ export const transformAST: ASTTransformation = (
         n.arguments.length === 1 &&
         j.ObjectExpression.check(n.arguments[0]) &&
         n.arguments[0].properties.some(
-          prop =>
+          (prop) =>
             j.ObjectProperty.check(prop) &&
             j.Identifier.check(prop.key) &&
             prop.key.name === 'el' &&
             // @ts-ignore
             prop.key.start !== prop.value.start &&
             // @ts-ignore
-            prop.key.end !== prop.value.end
+            prop.key.end !== prop.value.end,
         )
       )
     })
@@ -165,16 +165,16 @@ export const transformAST: ASTTransformation = (
     newWithEl.replaceWith(({ node }) => {
       const rootProps = node.arguments[0] as ObjectExpression
       const elIndex = rootProps.properties.findIndex(
-        p =>
+        (p) =>
           j.ObjectProperty.check(p) &&
           'key' in p &&
           j.Identifier.check(p.key) &&
           'name' in p.key &&
-          p.key.name === 'el'
+          p.key.name === 'el',
       )
       const elProperty = rootProps.properties.splice(
         elIndex,
-        1
+        1,
       )[0] as ObjectProperty
       const elExpr = elProperty.value
 
@@ -186,13 +186,13 @@ export const transformAST: ASTTransformation = (
             [
               ctor,
               // additional props, and skip empty objects
-              ...(rootProps.properties.length > 0 ? [rootProps] : [])
-            ]
+              ...(rootProps.properties.length > 0 ? [rootProps] : []),
+            ],
           ),
-          j.identifier('mount')
+          j.identifier('mount'),
         ),
         // @ts-ignore I'm not sure what the edge cases are
-        [elExpr]
+        [elExpr],
       )
     })
   }
