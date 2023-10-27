@@ -9,6 +9,7 @@ import Panels from './components/Panels.vue'
 import TransformView from './components/TransformView.vue'
 import OpenInEditor from './components/OpenInEditor.vue'
 import FixtureSelect from './components/FixtureSelect.vue'
+import RuntimeSelect from './components/RuntimeSelect.vue'
 import { initStore } from './store'
 
 const app = createApp(App)
@@ -16,6 +17,7 @@ const app = createApp(App)
 app.component('Editor', Editor)
 app.component('Navbar', Navbar)
 app.component('TransformationSelect', TransformationSelect)
+app.component('RuntimeSelect', RuntimeSelect)
 app.component('CodeMirror', CodeMirror)
 app.component('Panels', Panels)
 app.component('TransformView', TransformView)

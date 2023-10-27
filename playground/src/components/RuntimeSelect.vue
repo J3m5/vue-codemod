@@ -1,15 +1,15 @@
 <template>
   <select
-    v-model="current"
+    v-model="store.runtime"
     class="inline-block appearance-none outline-none bg-transparent text-white border-opacity-25 border border-gray-400 hover:border-white text-sm px-4 py-2 rounded leading-tight focus:outline-none focus:shadow-outline"
   >
     <option
       class="text-black"
-      v-for="i in transformations"
-      :value="i"
-      :key="i"
+      v-for="(value, name, index) in runtimes"
+      :value="value"
+      :key="index"
     >
-      {{ i }}
+      {{ name }}
     </option>
   </select>
 </template>
@@ -25,7 +25,11 @@ export default defineComponent({
     },
   },
   setup() {
-    return store
+    const runtimes = {
+      TypeScript: 'ts',
+      JavaScript: 'js',
+    }
+    return { store, runtimes }
   },
 })
 </script>

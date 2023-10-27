@@ -10,6 +10,7 @@ export const store = reactive({
   config: {
     vscodeInsiders: false,
   },
+  runtime: 'ts',
 })
 
 export function initStore() {
