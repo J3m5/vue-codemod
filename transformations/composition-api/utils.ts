@@ -47,10 +47,11 @@ export const findObjectProperty = (
       key: { name: property },
     })
     .filter(
-      (path) => path.parent.parent.value.type === 'ExportDefaultDeclaration',
+      (path) =>
+        path?.parent?.parent?.value?.type === 'ExportDefaultDeclaration',
     )
     .find(j.ObjectExpression)
-    .filter((path) => path.parent.value.key.name === property)
+    .filter((path) => path?.parent?.value?.key?.name === property)
 }
 
 export const getFunctionBuilderParams = (
