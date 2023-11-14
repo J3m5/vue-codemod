@@ -5,7 +5,7 @@ import {
   createWriteStream,
   existsSync,
   readFileSync,
-  writeFileSync
+  writeFileSync,
 } from 'node:fs'
 import { resolve } from 'node:path'
 import Module from 'module'
@@ -36,7 +36,7 @@ const {
   transformation: transformationName,
   runAllTransformation: runAllTransformation,
   reportFormatter: formatter,
-  params
+  params,
 } = yargs(hideBin(process.argv))
   .usage('Usage: vue-codemod [file pattern] <option>')
   .option('transformation', {
@@ -44,34 +44,34 @@ const {
     type: 'string',
     conflicts: 'runAllTransformation',
     describe: 'Name or path of the transformation module',
-    choices: Object.keys(ruleDescription)
+    choices: Object.keys(ruleDescription),
   })
   .option('params', {
     alias: 'p',
-    describe: 'Custom params to the transformation'
+    describe: 'Custom params to the transformation',
   })
   .option('runAllTransformation', {
     alias: 'a',
     type: 'boolean',
     conflicts: 'transformation',
-    describe: 'run all transformation module'
+    describe: 'run all transformation module',
   })
   .option('reportFormatter', {
     alias: 'f',
     type: 'string',
     describe: 'Specify an output report formatter',
     default: 'table',
-    choices: ['table', 'detail', 'log']
+    choices: ['table', 'detail', 'log'],
   })
   .example([
     [
       'vue-codemod ./src -a',
-      'Run all rules to convert all relevant files in the ./src folder'
+      'Run all rules to convert all relevant files in the ./src folder',
     ],
     [
       'vue-codemod ./src/components/HelloWorld.vue -t slot-attribute',
-      'Run slot-attribute rule to convert HelloWorld.vue'
-    ]
+      'Run slot-attribute rule to convert HelloWorld.vue',
+    ],
   ])
   .help()
   .alias('h', 'help')
@@ -82,7 +82,7 @@ let logger: Console = console
 if (formatter === 'log') {
   const options = {
     flags: 'w',
-    encoding: 'utf8' as const // utf-8
+    encoding: 'utf8' as const, // utf-8
   }
   const stdout = createWriteStream('./vue_codemod.log', options)
   logger = new console.Console(stdout)
@@ -92,7 +92,7 @@ if (formatter === 'log') {
 async function main() {
   if (!transformationName && !runAllTransformation) {
     console.log(
-      'You need at least one option in command, enter vue-codemod -h to see help. '
+      'You need at least one option in command, enter vue-codemod -h to see help. ',
     )
     return
   }
@@ -101,7 +101,7 @@ async function main() {
   const answer = question(
     'Warning!!\n' +
       'This tool may overwrite files. Please use version control tools or back up your code in advance.\n' +
-      'Press enter or enter yes or enter Y to continue:'
+      'Press enter or enter yes or enter Y to continue:',
   )
   if (!['', 'yes', 'Y'].includes(answer.trim())) {
     console.log('Abort!!!')
@@ -116,7 +116,7 @@ async function main() {
 
   const resolvedPaths = globby.sync(
     (files as string[]).concat('!node_modules'),
-    { gitignore: true }
+    { gitignore: true },
   )
   if (transformationName) {
     debug(`run ${transformationName} transformation`)
@@ -124,7 +124,7 @@ async function main() {
     processTransformation(
       resolvedPaths,
       transformationName,
-      transformationModule
+      transformationModule,
     )
     // if (packageTransform()) {
     //   processFilePath.push('package.json')
@@ -146,7 +146,7 @@ async function main() {
         processTransformation(resolvedPaths, key, builtInTransformations[key])
       } else {
         debug(
-          `skip ${key} transformation, Because it will run in other transformation`
+          `skip ${key} transformation, Because it will run in other transformation`,
         )
       }
     }
@@ -157,7 +157,7 @@ async function main() {
         processTransformation(resolvedPaths, key, vueTransformations[key])
       } else {
         debug(
-          `skip ${key} transformation, Because it will run in other transformation`
+          `skip ${key} transformation, Because it will run in other transformation`,
         )
       }
     }
@@ -167,7 +167,7 @@ async function main() {
     // }
   }
   cliInstance.update(cliInstance.getTotal(), {
-    process: 'Transformation finished! '
+    process: 'Transformation finished! ',
   })
   cliInstance.stop()
   formatterOutput(processFilePath, formatter, logger)
@@ -181,7 +181,7 @@ async function main() {
 function processTransformation(
   resolvedPaths: string[],
   transformationName: string,
-  transformationModule: TransformationModule
+  transformationModule: TransformationModule,
 ) {
   if (formatter === 'log')
     logger.time(`Processing use ${transformationName} transformation`)
@@ -195,7 +195,7 @@ function processTransformation(
       .join('\n')
     const fileInfo = {
       path: p,
-      source: retainedSource
+      source: retainedSource,
     }
     const extension = (/\.([^.]*)$/.exec(fileInfo.path) || [])[0]
     if (!extension) {
@@ -212,7 +212,7 @@ function processTransformation(
       const result = runTransformation(
         fileInfo,
         transformationModule,
-        params as object
+        params as object,
       )
       if (!result) throw `Processed file ${fileInfo.path} failed`
 
@@ -235,14 +235,14 @@ function processTransformation(
     if (
       Object.prototype.hasOwnProperty.call(
         ruleDescription,
-        transformationName
+        transformationName,
       ) &&
       (formatter === 'detail' || formatter === 'log')
     ) {
       const ruleOutput = {
         rule_name: transformationName,
         website: ruleDescription[transformationName].description,
-        transformed_files: ruleProcessFile
+        transformed_files: ruleProcessFile,
       }
 
       if (formatter === 'log') logger.log(ruleOutput)
@@ -250,7 +250,7 @@ function processTransformation(
   }
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err)
   process.exit(1)
 })
@@ -272,7 +272,7 @@ function loadTransformationModule(nameOrPath: string) {
   const customModulePath = resolve(process.cwd(), nameOrPath)
   if (existsSync(customModulePath)) {
     const requireFunc = Module.createRequire(
-      resolve(process.cwd(), './package.json')
+      resolve(process.cwd(), './package.json'),
     )
     // TODO: interop with ES module
     // TODO: fix absolute path

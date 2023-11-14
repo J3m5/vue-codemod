@@ -69,6 +69,7 @@ export const transformProps = ({
 
   const propsNames = getPropsNames(props)
   collector.propsNames.push(...propsNames)
+
   if (params?.runtime === 'ts' && !j.ArrayExpression.check(props)) {
     const propTypes = props.properties.flatMap((property) => {
       if (
