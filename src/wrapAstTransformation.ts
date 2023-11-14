@@ -10,6 +10,7 @@ export type Context = {
 
 export type Params = {
   [param: string]: string | boolean | number | undefined | string[] | Params
+  runtime?: 'js' | 'ts'
 }
 
 export type ASTTransformation<OtherParams = object> = {

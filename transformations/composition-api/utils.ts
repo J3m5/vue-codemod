@@ -3,14 +3,14 @@ import type {
   Identifier,
   Node,
   ObjectMethod,
-  ObjectProperty
+  ObjectProperty,
 } from 'jscodeshift'
 
 import j from 'jscodeshift'
 import type { ExportDefaultCollection, ObjectFunction, Property } from './types'
 
 export const isKeyIdentifier = <T extends ObjectProperty | ObjectMethod>(
-  nodeValue: T
+  nodeValue: T,
 ): nodeValue is T & { key: Identifier } =>
   'key' in nodeValue && j.Identifier.check(nodeValue.key)
 
@@ -28,7 +28,7 @@ export const isFunction = (node: Property): node is ObjectFunction => {
   return false
 }
 
-export const get = <U extends Node>(collection: Collection<U>) => {
+export const getNodes = <U extends Node>(collection: Collection<U>) => {
   return collection.nodes()[0]
 }
 export const getFunctionNodeValue = (methodProp: ObjectFunction) => {
@@ -40,27 +40,27 @@ export const getFunctionNodeValue = (methodProp: ObjectFunction) => {
 
 export const findObjectProperty = (
   defaultExport: ExportDefaultCollection,
-  property: string
+  property: string,
 ) => {
   return defaultExport
     .find(j.ObjectProperty, {
-      key: { name: property }
+      key: { name: property },
     })
     .filter(
-      path => path.parent.parent.value.type === 'ExportDefaultDeclaration'
+      (path) => path.parent.parent.value.type === 'ExportDefaultDeclaration',
     )
     .find(j.ObjectExpression)
-    .filter(path => path.parent.value.key.name === property)
+    .filter((path) => path.parent.value.key.name === property)
 }
 
 export const getFunctionBuilderParams = (
   methodProp: ObjectFunction,
-  useArgs: boolean = false
+  useArgs: boolean = false,
 ) => {
   const { async, body, params } = getFunctionNodeValue(methodProp)
   return {
     async,
     body,
-    params: useArgs ? params : []
+    params: useArgs ? params : [],
   }
 }

@@ -2,24 +2,25 @@ import j from 'jscodeshift'
 import type { TransformParams } from './types'
 import {
   findObjectProperty,
-  get,
+  getNodes,
   getFunctionBuilderParams,
-  isFunction
+  isFunction,
 } from './utils'
 
 export const transformComputed = ({
   defaultExport,
-  collector
+  collector,
 }: TransformParams) => {
   const computedCollection = findObjectProperty(defaultExport, 'computed')
 
   if (!computedCollection.length) return
 
-  const functionNodes = get(computedCollection).properties.filter(isFunction)
+  const functionNodes =
+    getNodes(computedCollection).properties.filter(isFunction)
 
   if (!functionNodes.length) return
 
-  const computedNodes = functionNodes.map(computed => {
+  const computedNodes = functionNodes.map((computed) => {
     const { name } = computed.key
     const computedBuilderParams = getFunctionBuilderParams(computed)
 
@@ -29,10 +30,10 @@ export const transformComputed = ({
         j.variableDeclarator(
           j.identifier(name),
           j.callExpression(j.identifier('computed'), [
-            j.arrowFunctionExpression.from(computedBuilderParams)
-          ])
-        )
-      ])
+            j.arrowFunctionExpression.from(computedBuilderParams),
+          ]),
+        ),
+      ]),
     ] as const
   })
 

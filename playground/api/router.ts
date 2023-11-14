@@ -38,7 +38,6 @@ router.post('/run/:trans', async (ctx) => {
   const input = ctx.request.body
   const params = ctx.query
   const script = path.resolve(__dirname, 'transfrom.ts')
-  console.log({ query: ctx.query })
 
   const result = spawnSync(
     `ts-node${cmdSuffix}`,

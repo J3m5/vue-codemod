@@ -2,22 +2,23 @@ import j from 'jscodeshift'
 import type { TransformParams } from './types'
 import {
   findObjectProperty,
-  get,
+  getNodes,
   getFunctionBuilderParams,
-  isFunction
+  isFunction,
 } from './utils'
 
 export const transformFilters = ({
   defaultExport,
-  collector
+  collector,
 }: TransformParams) => {
   const filtersCollection = findObjectProperty(defaultExport, 'filters')
 
   if (!filtersCollection.length) return
 
-  const functionNodes = get(filtersCollection).properties.filter(isFunction)
+  const functionNodes =
+    getNodes(filtersCollection).properties.filter(isFunction)
 
-  const methodNodes = functionNodes.map(methodProp => {
+  const methodNodes = functionNodes.map((methodProp) => {
     const methodBuilderParams = getFunctionBuilderParams(methodProp, true)
     const { name } = methodProp.key
     return [
@@ -25,9 +26,9 @@ export const transformFilters = ({
       j.variableDeclaration('const', [
         j.variableDeclarator(
           j.identifier(name),
-          j.arrowFunctionExpression.from(methodBuilderParams)
-        )
-      ])
+          j.arrowFunctionExpression.from(methodBuilderParams),
+        ),
+      ]),
     ] as const
   })
 

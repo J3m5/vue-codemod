@@ -62,7 +62,7 @@ export const transformAST: ASTTransformation = ({ root, j }, params) => {
 
   insertNodes({ defaultExport, collector, root })
 
-  defaultExport.remove()
+  // defaultExport.remove()
 
   cntFunc()
 }

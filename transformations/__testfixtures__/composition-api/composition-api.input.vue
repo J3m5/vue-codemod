@@ -12,9 +12,33 @@ export default {
   name: 'Test',
   props: {
     title: {
+      default: 'title',
+      type: String,
+    },
+    title2: {
       required: true,
-      type: String
-    }
+      type: Number,
+    },
+    title3: {
+      required: true,
+      type: Array,
+    },
+    title4: {
+      required: true,
+      type: Object,
+    },
+    title5: {
+      required: true,
+      type: Date,
+    },
+    title6: {
+      required: true,
+      type: Function,
+    },
+    title7: {
+      type: Symbol,
+    },
+    title8: String,
   },
   data: {
     subtitle: 'test',
@@ -24,7 +48,7 @@ export default {
     nu: null,
     loading: true,
     obj: { a: 1 },
-    arr: [1]
+    arr: [1],
   },
   mounted() {
     console.log(this.$refs.titleDiv)
@@ -57,17 +81,17 @@ export default {
     console.log(this.$refs.titleDiv)
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       console.log(vm)
     })
   },
   beforeRouteLeave(to, from, next) {
-    next(vm => {
+    next((vm) => {
       console.log(vm)
     })
   },
   beforeRouteUpdate(to, from, next) {
-    next(vm => {
+    next((vm) => {
       console.log(vm)
     })
   },
@@ -86,37 +110,37 @@ export default {
         console.log(val, oldVal)
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     nu: {
       handler: (val, oldVal) => {
         console.log(val, oldVal)
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     loading: {
       handler: function (val, oldVal) {
         console.log(val, oldVal)
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     'obj.a': (val, oldVal) => {
       console.log(val, oldVal)
     },
     loading: function (val, oldVal) {
       console.log(val, oldVal)
-    }
+    },
   },
   filters: {
-    uppercase: value => value.toUpperCase(),
+    uppercase: (value) => value.toUpperCase(),
     lowercase(value) {
       return value.toLowerCase()
     },
     capitalize: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
-    }
+    },
   },
   methods: {
     async start() {
@@ -124,17 +148,17 @@ export default {
       this.loading = false
       this.obj.a = 2
     },
-    finish: async bool => {
+    finish: async (bool) => {
       this.loading = bool
     },
     restart: async function () {
       this.loading = false
       return this.computeVM0
-    }
+    },
   },
   computed: {
-    computeVM0: vm => vm.num + 1,
-    computeVM1: vm => {
+    computeVM0: (vm) => vm.num + 1,
+    computeVM1: (vm) => {
       vm.num + 1
       vm.title = 'title'
       return vm.title
@@ -156,7 +180,7 @@ export default {
       this.num + 3
       this.title = 'title'
       this.finish(true)
-    }
-  }
+    },
+  },
 }
 </script>
