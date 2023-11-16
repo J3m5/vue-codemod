@@ -2,7 +2,7 @@ import type {
   ASTPath,
   Identifier,
   JSCodeshift,
-  ObjectProperty
+  ObjectProperty,
 } from 'jscodeshift'
 import j from 'jscodeshift'
 import type { TransformParams } from './types'
@@ -35,14 +35,15 @@ const getRefValue = ({ node }: { node: ObjectProperty; j: JSCodeshift }) => {
 
 const schema = z.object({
   key: z.object({
-    name: z.string().refine(name => name === 'data')
-  })
+    name: z.string().refine((name) => name === 'data'),
+  }),
 })
 
 const filterData = (
-  dataPropertyPath: ASTPath<ObjectProperty>
+  dataPropertyPath: ASTPath<ObjectProperty>,
 ): dataPropertyPath is ASTPath<ObjectProperty & { key: Identifier }> => {
-  const grandParent = dataPropertyPath.parent.parent.value
+  const grandParent = dataPropertyPath?.parent?.parent?.value
+  if (!grandParent) return false
 
   return (
     ['ArrowFunctionExpression', 'ReturnStatement'].includes(grandParent.type) ||
@@ -54,24 +55,24 @@ const filterData = (
 const buildRef = (
   name: string,
   identifier: string,
-  refValue: Exclude<ReturnType<typeof getRefValue>, undefined>
+  refValue: Exclude<ReturnType<typeof getRefValue>, undefined>,
 ) => {
   return j.variableDeclaration('const', [
     j.variableDeclarator(
       j.identifier(name),
-      j.callExpression(j.identifier(identifier), [refValue])
-    )
+      j.callExpression(j.identifier(identifier), [refValue]),
+    ),
   ])
 }
 
 export const transformData = ({
   defaultExport,
-  collector
+  collector,
 }: TransformParams) => {
   defaultExport
     .find(j.ObjectProperty)
     .filter(filterData)
-    .forEach(dataPropPath => {
+    .forEach((dataPropPath) => {
       const refValue = getRefValue({ node: dataPropPath.value, j })
 
       if (!refValue) return []
