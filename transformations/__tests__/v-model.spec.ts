@@ -1,9 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 
-const transform = require('../v-model')
+import transform, { parser } from '../v-model'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   props: {
@@ -42,9 +42,8 @@ defineInlineTest(
   'transformation v-mode'
 )
 
-
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   props: {
@@ -73,7 +72,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   props: {

@@ -1,10 +1,21 @@
 <template>
-  <div class="relative h-auto overflow-hidden" @mousemove="onMove" @mouseup="pressed = false">
-    <div class="panels grid h-full" :style="style">
+  <div
+    class="relative h-auto overflow-hidden"
+    @mousemove="onMove"
+    @mouseup="pressed = false"
+  >
+    <div
+      class="panels grid h-full"
+      :style="style"
+    >
       <slot name="left"></slot>
       <slot name="right"></slot>
     </div>
-    <div class="panels-handler" :style="style" @mousedown="pressed = true">
+    <div
+      class="panels-handler"
+      :style="style"
+      @mousedown="pressed = true"
+    >
       <div class="inner"></div>
     </div>
   </div>

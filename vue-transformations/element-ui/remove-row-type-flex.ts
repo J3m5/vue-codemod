@@ -1,9 +1,10 @@
-import { Node, VIdentifier } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtil from '../../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { remove } from '../../src/operationUtils'
 import type { Operation } from '../../src/operationUtils'
+
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -25,9 +26,8 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-function fix(node: VIdentifier): Operation[] {
-  let fixOperations: Operation[] = []
-  fixOperations.push(OperationUtil.remove(node))
-  // @ts-ignore
+function fix(node: Node): Operation[] {
+  const fixOperations: Operation[] = []
+  fixOperations.push(remove(node))
   return fixOperations
 }

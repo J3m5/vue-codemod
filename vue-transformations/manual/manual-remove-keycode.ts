@@ -1,40 +1,44 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../../src/operationUtils'
-import type { VueASTTransformation } from '../../src/wrapVueTransformation'
-import * as parser from 'vue-eslint-parser'
+import type {
+  Context,
+  VueASTTransformation
+} from '../../src/wrapVueTransformation'
+import { parse, AST } from 'vue-eslint-parser'
 import wrap from '../../src/wrapVueTransformation'
 import { VuePushManualList } from '../../src/report'
 
 export const transformAST: VueASTTransformation = context => {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   findNodes(context)
   return fixOperations
 }
 
 export default wrap(transformAST)
 
-function findNodes(context: any) {
+function findNodes(context: Context) {
   const { file } = context
   const source = file.source
   const options = { sourceType: 'module' }
-  const ast = parser.parse(source, options)
-  let toFixNodes: Node[] = []
-  let root: Node = <Node>ast.templateBody
-  let key = /^key{1}/
-  let number = /^\d+/
-  parser.AST.traverseNodes(root, {
+  const ast = parse(source, options)
+  const toFixNodes: Node[] = []
+  const root: Node = <Node>ast.templateBody
+  const key = /^key{1}/
+  const number = /^\d+/
+  AST.traverseNodes(root, {
     enterNode(node: Node) {
       if (
         node.type === 'VDirectiveKey' &&
         node?.name?.name === 'on' &&
-        // @ts-ignore
-        key.test(node?.argument?.name) &&
+        node.argument &&
+        'name' in node.argument &&
+        key.test(node.argument.name) &&
         number.test(node?.modifiers[0]?.name)
       ) {
         toFixNodes.push(node)
       }
     },
-    leaveNode(node: Node) {}
+    leaveNode() {}
   })
 
   toFixNodes.forEach(node => {

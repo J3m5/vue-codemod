@@ -11,34 +11,33 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
-type Params = {
-  removablePlugins: string[]
-}
-
-export const transformAST: ASTTransformation<Params> = (
-  context,
-  { removablePlugins }
-) => {
+export const transformAST: ASTTransformation<{
+  removablePlugins?: string[]
+}> = (context, params) => {
   const { j, root } = context
   const vueUseCalls = root.find(j.CallExpression, {
     callee: {
       type: 'MemberExpression',
       object: {
-        name: 'Vue'
+        name: 'Vue',
       },
       property: {
-        name: 'use'
-      }
-    }
+        name: 'use',
+      },
+    },
   })
 
   const removedPlugins: string[] = []
   const removableUseCalls = vueUseCalls
-    .filter(path => path.parent.parent.value.type === 'Program')
+    .filter((path) => path.parent.parent.value.type === 'Program')
     .filter(({ node }) => {
       if (j.Identifier.check(node.arguments[0])) {
         const plugin = node.arguments[0].name
-        if (removablePlugins?.includes(plugin)) {
+        if (
+          params &&
+          'removablePlugins' in params &&
+          params.removablePlugins?.includes(plugin)
+        ) {
           removedPlugins.push(plugin)
           return true
         }
@@ -49,10 +48,10 @@ export const transformAST: ASTTransformation<Params> = (
 
   removableUseCalls.remove()
 
-  removedPlugins.forEach(name =>
+  removedPlugins.forEach((name) =>
     removeExtraneousImport(context, {
-      localBinding: name
-    })
+      localBinding: name,
+    }),
   )
 }
 

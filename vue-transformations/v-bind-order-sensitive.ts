@@ -1,9 +1,10 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../src/operationUtils'
+import { insertTextBefore, remove, removeRange } from '../src/operationUtils'
+
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -14,7 +15,7 @@ export const transformAST = createTransformAST(
 
 export default wrap(transformAST)
 
-function nodeFilter(node: Node): boolean {
+function nodeFilter(node: Node) {
   return (
     node.type === 'VAttribute' &&
     node.directive &&
@@ -23,23 +24,21 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+function fix(node: Node, source: string) {
+  const fixOperations: Operation[] = []
   // get parent node
-  const target: any = node!.parent
+  const target = node?.parent
   // get the value of v-bind according to the range
-  const bindValue: string = source.slice(node.range[0], node.range[1]) + ' '
+  const bindValue = source.slice(node.range[0], node.range[1]) + ' '
   // remove node
-  if (target.attributes[target.attributes.length - 1] === node) {
-    fixOperations.push(OperationUtils.remove(node))
-  } else {
-    fixOperations.push(
-      OperationUtils.removeRange([node.range[0], node.range[1] + 1])
-    )
+  if (target && 'attributes' in target) {
+    if (target.attributes[target.attributes.length - 1] === node) {
+      fixOperations.push(remove(node))
+    } else {
+      fixOperations.push(removeRange([node.range[0], node.range[1] + 1]))
+    }
+    // add node to the first
+    fixOperations.push(insertTextBefore(target.attributes[0], bindValue))
   }
-  // add node to the first
-  fixOperations.push(
-    OperationUtils.insertTextBefore(target.attributes[0], bindValue)
-  )
   return fixOperations
 }

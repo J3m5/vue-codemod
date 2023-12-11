@@ -1,18 +1,55 @@
-import {
-  CompilerOptions,
+import type {
+  BindingMetadata,
   CodegenResult,
+  CompilerError,
+  CompilerOptions,
+  ElementNode,
   ParserOptions,
   RootNode,
-  NodeTypes,
-  ElementNode,
-  SourceLocation,
-  CompilerError,
-  TextModes,
-  BindingMetadata
+  SourceLocation
 } from '@vue/compiler-core'
 import * as CompilerDom from '@vue/compiler-dom'
-import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { Statement } from '@babel/types'
+import type { Statement } from 'jscodeshift'
+import { LRUCache } from 'lru-cache'
+import type { RawSourceMap } from 'source-map'
+import { SourceMapGenerator } from 'source-map'
+
+const textModes = {
+  DATA: 0 as const,
+  RCDATA: 1 as const,
+  RAWTEXT: 2 as const,
+  CDATA: 3 as const,
+  ATTRIBUTE_VALUE: 4 as const
+}
+const nodeTypes = {
+  ROOT: 0 as const,
+  ELEMENT: 1 as const,
+  TEXT: 2 as const,
+  COMMENT: 3 as const,
+  SIMPLE_EXPRESSION: 4 as const,
+  INTERPOLATION: 5 as const,
+  ATTRIBUTE: 6 as const,
+  DIRECTIVE: 7 as const,
+  COMPOUND_EXPRESSION: 8 as const,
+  IF: 9 as const,
+  IF_BRANCH: 10 as const,
+  FOR: 11 as const,
+  TEXT_CALL: 12 as const,
+  VNODE_CALL: 13 as const,
+  JS_CALL_EXPRESSION: 14 as const,
+  JS_OBJECT_EXPRESSION: 15 as const,
+  JS_PROPERTY: 16 as const,
+  JS_ARRAY_EXPRESSION: 17 as const,
+  JS_FUNCTION_EXPRESSION: 18 as const,
+  JS_CONDITIONAL_EXPRESSION: 19 as const,
+  JS_CACHE_EXPRESSION: 20 as const,
+  JS_BLOCK_STATEMENT: 21 as const,
+  JS_TEMPLATE_LITERAL: 22 as const,
+  JS_IF_STATEMENT: 23 as const,
+  JS_ASSIGNMENT_EXPRESSION: 24 as const,
+  JS_SEQUENCE_EXPRESSION: 25 as const,
+  JS_RETURN_STATEMENT: 26 as const
+}
 
 /**
  * The following function is adapted from https://github.com/psalaets/vue-sfc-descriptor-to-string/blob/master/index.js
@@ -188,10 +225,10 @@ export interface SFCParseResult {
 }
 
 const SFC_CACHE_MAX_SIZE = 500
-const sourceToSFC = new (require('lru-cache'))(SFC_CACHE_MAX_SIZE) as Map<
-  string,
-  SFCParseResult
->
+
+const sourceToSFC = new LRUCache<string, SFCParseResult>({
+  max: SFC_CACHE_MAX_SIZE
+})
 
 export function parse(
   source: string,
@@ -235,15 +272,15 @@ export function parse(
         (tag === 'template' &&
           props.some(
             p =>
-              p.type === NodeTypes.ATTRIBUTE &&
+              p.type === 6 &&
               p.name === 'lang' &&
               p.value &&
               p.value.content !== 'html'
           ))
       ) {
-        return TextModes.RAWTEXT
+        return textModes.RAWTEXT
       } else {
-        return TextModes.DATA
+        return textModes.DATA
       }
     },
     onError: e => {
@@ -252,10 +289,11 @@ export function parse(
   })
 
   ast.children.forEach(node => {
-    if (node.type == NodeTypes.ELEMENT) {
+    if (node.type == nodeTypes.ELEMENT) {
       if (!node.children.length && !hasSrc(node) && node.tag !== 'template') {
         return
       }
+
       switch (node.tag) {
         case 'template':
           if (!descriptor.template) {
@@ -269,7 +307,7 @@ export function parse(
             errors.push(createDuplicateBlockError(node))
           }
           break
-        case 'script':
+        case 'script': {
           const scriptBlock = createBlock(node, source, pad) as SFCScriptBlock
           const isSetup = !!scriptBlock.attrs.setup
           if (isSetup && !descriptor.scriptSetup) {
@@ -282,7 +320,8 @@ export function parse(
           }
           errors.push(createDuplicateBlockError(node, isSetup))
           break
-        case 'style':
+        }
+        case 'style': {
           const styleBlock = createBlock(node, source, pad) as SFCStyleBlock
           if (styleBlock.attrs.vars) {
             errors.push(
@@ -294,11 +333,12 @@ export function parse(
           }
           descriptor.styles.push(styleBlock)
           break
+        }
         default:
           descriptor.customBlocks.push(createBlock(node, source, pad))
           break
       }
-    } else if (node.type == NodeTypes.COMMENT) {
+    } else if (node.type == nodeTypes.COMMENT) {
       // @ts-ignore
       descriptor.customBlocks.push(node)
       // descriptor.customBlocks.push(createBlock(node, source, pad))
@@ -394,7 +434,7 @@ function createBlock(
     block.content = padContent(source, block, pad) + block.content
   }
   node.props.forEach(p => {
-    if (p.type === NodeTypes.ATTRIBUTE) {
+    if (p.type === nodeTypes.ATTRIBUTE) {
       attrs[p.name] = p.value ? p.value.content || true : true
       if (p.name === 'lang') {
         block.lang = p.value && p.value.content
@@ -471,7 +511,7 @@ function padContent(
 
 function hasSrc(node: ElementNode) {
   return node.props.some(p => {
-    if (p.type !== NodeTypes.ATTRIBUTE) {
+    if (p.type !== nodeTypes.ATTRIBUTE) {
       return false
     }
     return p.name === 'src'

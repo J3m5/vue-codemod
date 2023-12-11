@@ -1,9 +1,9 @@
 import { Node, VElement } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
+import { remove } from '../src/operationUtils'
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -19,14 +19,14 @@ function nodeFilter(node: Node): boolean {
   return node.type === 'VElement' && node.name === 'router-link'
 }
 
-function fix(node: Node, source: string): Operation[] {
+function fix(node: Node) {
   node = <VElement>node
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // remove 'exact' attribute in router-link
   node.startTag.attributes.forEach(attr => {
     if (attr.type === 'VAttribute' && attr.key.name === 'exact') {
-      fixOperations.push(OperationUtils.remove(attr))
+      fixOperations.push(remove(attr))
     }
   })
 

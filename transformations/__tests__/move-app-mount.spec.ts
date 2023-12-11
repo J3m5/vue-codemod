@@ -1,10 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 
-const transform = require('../move-app-mount')
-
+import transform, { parser } from '../move-app-mount'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `app.directive('demo', {})
 const app = Vue.createApp(App).use(button_counter).use(router).use(store);
@@ -30,7 +29,7 @@ app.mount("#app");`,
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `Vue.directive('demo', {})
 Vue.createApp(App).use(button_counter).use(router).use(store).mount("#app");

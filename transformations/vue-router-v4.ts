@@ -82,9 +82,10 @@ export const transformAST: ASTTransformation = context => {
         routerConfig.properties.forEach(p => {
           if (
             (j.ObjectProperty.check(p) || j.Property.check(p)) &&
-            (p.key as any).name === 'mode'
+            'name' in p.key &&
+            p.key.name === 'mode'
           ) {
-            const mode = (p.value as any).value
+            const mode = 'value' in p.value && p.value.value
             if (mode !== 'hash' && mode !== 'history' && mode !== 'abstract') {
               const path = filename
               const name = 'vue-router mode'
@@ -119,8 +120,8 @@ export const transformAST: ASTTransformation = context => {
         if (!j.ObjectProperty.check(p) && !j.Property.check(p)) {
           return true
         }
-        if ((p.key as any).name === 'mode') {
-          const mode = (p.value as any).value
+        if ('name' in p.key && p.key.name === 'mode' && 'value' in p.value) {
+          const mode = p.value.value
           if (mode === 'hash') {
             historyMode = 'createWebHashHistory'
           } else if (mode === 'history') {
@@ -133,10 +134,10 @@ export const transformAST: ASTTransformation = context => {
             )
           }
           return false
-        } else if ((p.key as any).name === 'base') {
+        } else if ('name' in p.key && p.key.name === 'base') {
           baseValue = p.value
           return false
-        } else if ((p.key as any).name === 'fallback') {
+        } else if ('name' in p.key && p.key.name === 'fallback') {
           return false
         }
 

@@ -5,18 +5,24 @@
 
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
-import type * as N from 'jscodeshift'
+import type {
+  CallExpression,
+  MemberExpression,
+  Identifier,
+  VariableDeclaration,
+  ASTNode
+} from 'jscodeshift'
 import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
   const cntFunc = getCntFunc('remove-vue-set-and-delete', global.outputReport)
-  const isVue = (node: N.ASTNode) => {
+  const isVue = (node: ASTNode) => {
     return j.Identifier.check(node) && node.name === 'Vue'
   }
 
   const setOrDeleteCalls = root
-    .find(j.CallExpression, (n: N.CallExpression) => {
+    .find(j.CallExpression, (n: CallExpression) => {
       if (
         !j.MemberExpression.check(n.callee) ||
         !j.Identifier.check(n.callee.property)
@@ -42,15 +48,14 @@ export const transformAST: ASTTransformation = context => {
       return false
     })
     .filter(path => {
-      const prop = (path.node.callee as N.MemberExpression)
-        .property as N.Identifier
+      const prop = (path.node.callee as MemberExpression).property as Identifier
 
       // only the object of `.$set` and `.$delete` is pending for check
       if (prop.name !== '$set' && prop.name !== '$delete') {
         return true
       }
 
-      const obj = (path.node.callee as N.MemberExpression).object
+      const obj = (path.node.callee as MemberExpression).object
 
       if (j.ThisExpression.check(obj)) {
         return true
@@ -60,7 +65,7 @@ export const transformAST: ASTTransformation = context => {
         return false
       }
 
-      const decls = j(path).getVariableDeclarators(p => obj.name)
+      const decls = j(path).getVariableDeclarators(() => obj.name)
       if (decls && decls.length === 1) {
         const declPath = decls.paths()[0]
         const declNode = declPath.node
@@ -68,7 +73,7 @@ export const transformAST: ASTTransformation = context => {
 
         return (
           j.VariableDeclarator.check(declNode) &&
-          (declStmt as N.VariableDeclaration).kind === 'const' &&
+          (declStmt as VariableDeclaration).kind === 'const' &&
           j.Identifier.check(declNode.id) &&
           j.ThisExpression.check(declNode.init)
         )
@@ -83,7 +88,7 @@ export const transformAST: ASTTransformation = context => {
       return node
     }
 
-    const prop = (node.callee as N.MemberExpression).property as N.Identifier
+    const prop = (node.callee as MemberExpression).property as Identifier
     if (prop.name === '$set' || prop.name === 'set') {
       cntFunc()
       return j.assignmentExpression(

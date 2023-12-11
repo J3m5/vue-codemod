@@ -10,8 +10,11 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the CallExpression
   const emitCalls = defaultExportBody.find(j.CallExpression, node => {
     return (
+      'object' in node.callee &&
       node.callee.object?.type === 'ThisExpression' &&
-      node.callee.property?.name === '$emit'
+      'property' in node.callee &&
+      'name' in node.callee.property &&
+      node.callee.property.name === '$emit'
     )
   })
 
@@ -26,7 +29,11 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
     // find the emit property
     const emitsProperty = defaultExportBody.find(j.ObjectProperty, node => {
-      return node.key.name === 'emits' && node.value.type === 'ArrayExpression'
+      return (
+        'name' in node.key &&
+        node.key.name === 'emits' &&
+        node.value.type === 'ArrayExpression'
+      )
     })
 
     const elements = emitsProperty.length

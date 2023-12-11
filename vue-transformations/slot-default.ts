@@ -1,9 +1,9 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../src/operationUtils'
+import { remove } from '../src/operationUtils'
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(nodeFilter, fix, 'slot-default')
@@ -23,7 +23,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   const target: any = node!.parent!.parent
   const targetParent: any = target.parent
@@ -31,7 +31,7 @@ function fix(node: Node): Operation[] {
   targetParent.children
     .filter((el: any) => el.type == 'VElement' && el.name != 'template')
     .forEach((element: any) => {
-      fixOperations.push(OperationUtils.remove(element))
+      fixOperations.push(remove(element))
     })
   return fixOperations
 }

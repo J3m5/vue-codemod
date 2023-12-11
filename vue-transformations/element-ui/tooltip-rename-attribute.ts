@@ -1,6 +1,6 @@
-import { Node, VIdentifier } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtil from '../../src/operationUtils'
-import type { Operation } from '../../src/operationUtils'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { getFixOperations } from '../../src/operationUtils'
+
 import {
   default as wrap,
   createTransformAST
@@ -13,7 +13,7 @@ export const transformAST = createTransformAST(
 )
 export default wrap(transformAST)
 
-const renameMap: Map<string, string> = new Map([
+const renameMap = new Map([
   ['open-delay', 'show-after'],
   ['hide-after', 'auto-close']
 ])
@@ -27,9 +27,6 @@ function nodeFilter(node: Node): boolean {
   )
 }
 
-function fix(node: VIdentifier): Operation[] {
-  let fixOperations: Operation[] = []
-  // @ts-ignore
-  fixOperations.push(OperationUtil.replaceText(node, renameMap.get(node.name)))
-  return fixOperations
+function fix(node: Node) {
+  return getFixOperations(node, renameMap)
 }

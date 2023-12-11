@@ -1,9 +1,9 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 
-const renameLifeCycle = require('../rename-lifecycle')
+import renameLifeCycle, { parser } from '../rename-lifecycle'
 
 defineInlineTest(
-  renameLifeCycle,
+  { default: renameLifeCycle, parser },
   {},
   `export default {
     destroyed: function () {
@@ -29,4 +29,5 @@ defineInlineTest(
       destroyed: function() {},
       beforeDestroy: function() {}
     }
-}`)
+}`
+)

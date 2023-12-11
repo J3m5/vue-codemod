@@ -1,7 +1,6 @@
-// @ts-nocheck
-/* eslint-env jest */
 import type { Transform } from 'jscodeshift'
 import runTransformation from '../runTransformation'
+import type { StatementKind } from 'ast-types/lib/gen/kinds'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')
@@ -10,27 +9,30 @@ const unreachableTransform: Transform = () => {
 const addUseStrict: Transform = (file, api, options) => {
   const j = api.jscodeshift
 
-  const hasStrictMode = (body) =>
-    body.some((statement) =>
+  const hasStrictMode = (body: StatementKind[]) =>
+    body.some(statement =>
       j.match(statement, {
         type: 'ExpressionStatement',
         expression: {
           type: 'Literal',
-          value: 'use strict',
-        },
+          value: 'use strict'
+        }
       })
     )
+  const createUseStrictExpression = () =>
+    j.expressionStatement(j.literal('use strict'))
 
-  const withComments = (to, from) => {
+  type StrictExpression = ReturnType<typeof createUseStrictExpression>
+
+  const withComments = (to: StrictExpression, from: StatementKind) => {
     to.comments = from.comments
     return to
   }
 
-  const createUseStrictExpression = () =>
-    j.expressionStatement(j.literal('use strict'))
+  const root = j(file.source).find(j.Program)
 
-  const root = j(file.source)
-  const body = root.get().value.program.body
+  const { body } = root.paths()[0].value
+
   if (!body.length || hasStrictMode(body)) {
     return null
   }
@@ -39,18 +41,20 @@ const addUseStrict: Transform = (file, api, options) => {
   body[0].comments = body[1].comments
   delete body[1].comments
 
-  return root.toSource(options.printOptions || { quote: 'single', lineTerminator: '\n' })
+  return root.toSource(
+    options.printOptions || { quote: 'single', lineTerminator: '\n' }
+  )
 }
 
 describe('run-transformation', () => {
-  it('transforms .js files', () => {
+  test.only('transforms .js files', () => {
     const source = `function a() { console.log('hello') }`
     const file = { path: '/tmp/a.js', source }
     const result = runTransformation(file, addUseStrict)
     expect(result).toBe(`'use strict';\nfunction a() { console.log('hello') }`)
   })
 
-  it.todo('transforms .ts files')
+  test.todo('transforms .ts files')
 
   it('transforms script blocks in .vue files', () => {
     const source = `<template>
@@ -112,7 +116,7 @@ export default {
 `)
   })
 
-  it('don\'t transform scriptSetup blocks in .vue files', () => {
+  it("don't transform scriptSetup blocks in .vue files", () => {
     const source = `<template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
@@ -180,7 +184,9 @@ export default {
 `)
   })
 
-  it.todo('transforms script blocks with custom lang attributes in .vue files')
+  test.todo(
+    'transforms script blocks with custom lang attributes in .vue files'
+  )
 
   it('(jscodeshift transforms) skips .vue files without script blocks', () => {
     const source = `
@@ -204,7 +210,7 @@ export default {
     const result = runTransformation(
       {
         path: '/tmp/hello.vue',
-        source,
+        source
       },
       unreachableTransform
     )
@@ -212,5 +218,5 @@ export default {
     expect(result).toEqual(source)
   })
 
-  it.todo('(VueTransformation) transforms template blocks in .vue files')
+  test.todo('(VueTransformation) transforms template blocks in .vue files')
 })

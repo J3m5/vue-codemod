@@ -1,5 +1,5 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../element-plus-upgrade')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform from '../element-plus-upgrade'
 
 defineInlineTest(
   transform,

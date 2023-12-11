@@ -1,11 +1,12 @@
-import * as OperationUtils from '../src/operationUtils'
+import createDebug from 'debug'
 import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../src/operationUtils'
+import { remove } from '../src/operationUtils'
+
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
-import createDebug from 'debug'
 
 const debug = createDebug('vue-codemod:rule')
 
@@ -27,7 +28,7 @@ function nodeFilter(node: Node): boolean {
  * @param node The Target Node
  */
 function fix(node: any): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   const target: any = node!.parent!.parent
 
   // The current node has no attribute that is v-for
@@ -49,7 +50,7 @@ function fix(node: any): Operation[] {
     return fixOperations
   }
 
-  fixOperations.push(OperationUtils.remove(node))
+  fixOperations.push(remove(node))
 
   return fixOperations
 }

@@ -1,11 +1,9 @@
-/* eslint-env jest */
-
 describe('CLI', () => {
-  it.todo('runs built-in transformation')
+  test.todo('runs built-in transformation')
 
-  it.todo('runs custom transformation')
+  test.todo('runs custom transformation')
 
-  it.todo('supports transforming .ts files')
+  test.todo('supports transforming .ts files')
 
-  it.todo('passes additional arguments to the transformation')
+  test.todo('passes additional arguments to the transformation')
 })

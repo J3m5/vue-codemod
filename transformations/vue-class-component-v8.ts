@@ -22,7 +22,7 @@ export const transformAST: ASTTransformation = context => {
     }
   )
 
-  ComponentImportSpec.replaceWith(({ node }) => {
+  ComponentImportSpec.replaceWith(() => {
     cntFunc()
     return j.importSpecifier(j.identifier('Options'), j.identifier('Component'))
   })

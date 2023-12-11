@@ -1,9 +1,6 @@
 import wrap from '../../src/wrapAstTransformation'
 import type { ASTTransformation } from '../../src/wrapAstTransformation'
-import type {
-  ImportSpecifier,
-  ImportDefaultSpecifier
-} from 'ast-types/gen/nodes'
+import type { namedTypes } from 'ast-types'
 import { getCntFunc } from '../../src/report'
 
 /**
@@ -21,7 +18,11 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
   if (elementPlusImport.length) {
     elementPlusImport.forEach(({ node }) => {
-      let newSpecifier: (ImportSpecifier | ImportDefaultSpecifier)[] = []
+      const newSpecifier: (
+        | namedTypes.ImportSpecifier
+        | namedTypes.ImportDefaultSpecifier
+      )[] = []
+      if (!node.specifiers) return
       node.specifiers.forEach(importNode => {
         cntFunc()
         if (importNode.type === 'ImportSpecifier') {
@@ -32,9 +33,12 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
             )
           )
           node.specifiers = newSpecifier
-        } else {
+        } else if (
+          importNode.local &&
+          typeof importNode.local.name === 'string'
+        ) {
           newSpecifier.push(
-            j.importDefaultSpecifier(j.identifier(importNode.local!.name))
+            j.importDefaultSpecifier(j.identifier(importNode.local.name))
           )
           node.specifiers = newSpecifier
         }

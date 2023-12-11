@@ -1,4 +1,4 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-production-tip')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform from '../remove-production-tip'
 
 defineInlineTest(transform, {}, `Vue.config.productionTip = true`, ``)

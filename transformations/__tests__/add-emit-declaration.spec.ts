@@ -1,8 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../add-emit-declaration')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../add-emit-declaration'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   props: ['text'],
@@ -28,7 +28,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   emits: [],
@@ -54,7 +54,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default {
   emits: ['increment'],

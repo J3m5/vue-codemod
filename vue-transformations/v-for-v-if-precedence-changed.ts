@@ -1,9 +1,14 @@
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
-import type { Operation } from '../src/operationUtils'
+import type { Node, VAttribute, VDirective } from 'vue-eslint-parser/ast/nodes'
 import {
-  default as wrap,
-  createTransformAST
+  insertTextAfter,
+  insertTextBefore,
+  remove
+} from '../src/operationUtils'
+import type { Operation } from '../src/operationUtils'
+
+import {
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -24,38 +29,47 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
-  const target: any = node!.parent
+  const fixOperations: Operation[] = []
+  const target = node!.parent
   let forValue: string = source.slice(node.range[0], node.range[1])
-  let keyNode: any = false
+  let keyNode: VAttribute | VDirective | undefined = undefined
   let ifNode: boolean = false
-  for (let findKeyNode of target?.attributes) {
-    // @ts-ignore
-    if (findKeyNode?.key?.argument?.name === 'key') {
-      keyNode = findKeyNode
-    }
+  if (!!target && 'attributes' in target && target.attributes.length) {
+    for (const findKeyNode of target.attributes) {
+      if (
+        'argument' in findKeyNode.key &&
+        !!findKeyNode.key.argument &&
+        'name' in findKeyNode.key.argument &&
+        findKeyNode.key.argument.name === 'key'
+      ) {
+        keyNode = findKeyNode
+      }
 
-    if (findKeyNode?.key?.name?.name === 'if') {
-      ifNode = true
+      if (
+        'key' in findKeyNode &&
+        'name' in findKeyNode.key &&
+        typeof findKeyNode.key.name === 'object' &&
+        'name' in findKeyNode.key.name &&
+        findKeyNode.key.name.name === 'if'
+      ) {
+        ifNode = true
+      }
     }
   }
 
   if (ifNode) {
     if (keyNode) {
-      let keyValue: string = source.slice(keyNode.range[0], keyNode.range[1])
+      const keyValue: string = source.slice(keyNode.range[0], keyNode.range[1])
       forValue += ' ' + keyValue
-      fixOperations.push(OperationUtils.remove(keyNode))
+      fixOperations.push(remove(keyNode))
     }
-    fixOperations.push(OperationUtils.remove(node))
-    fixOperations.push(
-      OperationUtils.insertTextBefore(
-        target!.parent,
-        `<template ${forValue}>\n`
+    fixOperations.push(remove(node))
+    if (!!target && 'parent' in target && !!target.parent) {
+      fixOperations.push(
+        insertTextBefore(target.parent, `<template ${forValue}>\n`)
       )
-    )
-    fixOperations.push(
-      OperationUtils.insertTextAfter(target!.parent, `\n</template>`)
-    )
+      fixOperations.push(insertTextAfter(target.parent, `\n</template>`))
+    }
   }
 
   return fixOperations

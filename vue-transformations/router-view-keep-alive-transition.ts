@@ -1,9 +1,14 @@
 import { Node, VElement } from 'vue-eslint-parser/ast/nodes'
-import * as OperationUtils from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
 import {
-  default as wrap,
-  createTransformAST
+  getText,
+  insertTextAfter,
+  insertTextBefore,
+  replaceText
+} from '../src/operationUtils'
+import {
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -24,7 +29,7 @@ function nodeFilter(node: Node): boolean {
 }
 
 function fix(node: Node, source: string): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
 
   // find transition nodes which contain router-view node.
   // note that router-view tag may under the keep-alive tag
@@ -51,20 +56,18 @@ function fix(node: Node, source: string): Operation[] {
   if (routerView) {
     routerView = <VElement>routerView
     // get attributes text
-    let attributeText = routerView.startTag.attributes
-      .map(attr => OperationUtils.getText(attr, source))
+    const attributeText = routerView.startTag.attributes
+      .map(attr => getText(attr, source))
       .join(' ')
     // replace with vue-router-next syntax
+    fixOperations.push(replaceText(routerView, '<component :is="Component" />'))
     fixOperations.push(
-      OperationUtils.replaceText(routerView, '<component :is="Component" />')
-    )
-    fixOperations.push(
-      OperationUtils.insertTextBefore(
+      insertTextBefore(
         node,
         `<router-view ${attributeText} v-slot="{ Component }">`
       )
     )
-    fixOperations.push(OperationUtils.insertTextAfter(node, '</router-view>'))
+    fixOperations.push(insertTextAfter(node, '</router-view>'))
   }
 
   return fixOperations

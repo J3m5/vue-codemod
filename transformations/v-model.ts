@@ -7,7 +7,10 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
   const cntFunc = getCntFunc('v-model', global.outputReport)
   // find model option
   const modelCollection = root
-    .find(j.ObjectProperty, node => node.key.name === 'model')
+    .find(
+      j.ObjectProperty,
+      node => 'name' in node.key && node.key.name === 'model'
+    )
     .filter(path => path.parent.parent.node.type == 'ExportDefaultDeclaration')
   if (!modelCollection.length) return
 
@@ -32,13 +35,19 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
 
   // find the props option
   const propsCollections = root
-    .find(j.ObjectProperty, node => node.key.name === 'props')
+    .find(
+      j.ObjectProperty,
+      node => 'name' in node.key && node.key.name === 'props'
+    )
     .filter(path => path.parent.parent.node.type === 'ExportDefaultDeclaration')
   if (!propsCollections.length) return
 
   // find the value which is in props
   const valueNodePath = propsCollections
-    .find(j.ObjectProperty, node => node.key.name === propName)
+    .find(
+      j.ObjectProperty,
+      node => 'name' in node.key && node.key.name === propName
+    )
     .filter(path => path.parent.parent.node.key.name === 'props')
 
   // remove model option
@@ -52,7 +61,10 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
 
   // find the methods option
   const methodsCollections = root
-    .find(j.ObjectProperty, node => node.key.name === 'methods')
+    .find(
+      j.ObjectProperty,
+      node => 'name' in node.key && node.key.name === 'methods'
+    )
     .filter(
       nodePath =>
         nodePath.parent.parent.node.type === 'ExportDefaultDeclaration'

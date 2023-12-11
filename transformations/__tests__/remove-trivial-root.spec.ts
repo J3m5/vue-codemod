@@ -1,8 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-trivial-root')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../remove-trivial-root'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `createApp({ render: () => h(App) });`,
   `createApp(App);`,
@@ -10,7 +10,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `Vue.createApp({ render: () => h(App) });`,
   `Vue.createApp(App);`,
@@ -18,7 +18,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `createApp({ render() { return h(App) } });`,
   `createApp(App);`,
@@ -26,7 +26,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `createApp({ render: () => { return h(App) } });`,
   `createApp(App);`,
@@ -34,7 +34,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `createApp({ render: () => h(App), data() { return { a: 1 } } });`,
   `createApp({ render: () => h(App), data() { return { a: 1 } } });`,

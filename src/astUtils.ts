@@ -24,7 +24,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   const paths: ASTPath<VueOptionsType>[] = []
   const { j, root, filename } = context
 
-  function wrapOptionsInPaths<T>(
+  function wrapOptionsInPaths(
     nodes: VueOptionsType
   ): ASTPath<VueOptionsType>[] {
     return j(nodes).paths()
@@ -126,7 +126,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     return (
       returnStatements.length > 0 &&
       returnStatements.every(path =>
-        !!path.node.argument ? isPromiseExpression(path.node.argument) : true
+        path.node.argument ? isPromiseExpression(path.node.argument) : true
       )
     )
   }
@@ -144,7 +144,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   // <https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State>
 
   function isLikelyVueOptions(
-    comp: ASTNode | null,
+    comp: ASTNode | null | undefined,
     {
       mayBeAsyncComponent = false,
       shouldCheckProps = false
@@ -168,7 +168,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     return false
   }
 
-  const isInSFC = filename.endsWith('.vue')
+  const isInSFC = !!filename && filename.endsWith('.vue')
 
   // export default {}
   const defaultObjectExport = root

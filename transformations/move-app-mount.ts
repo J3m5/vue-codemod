@@ -22,7 +22,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   }
   const appMountOnly = appMount.get()
   let lastend = appMountOnly.value.end
-  let appMountEnd = appMountOnly.value.end
+  const appMountEnd = appMountOnly.value.end
   let lastNode = appMountOnly
   const context = appMountOnly.value.expression?.arguments[0].value
   root.find(j.ExpressionStatement).forEach(node => {

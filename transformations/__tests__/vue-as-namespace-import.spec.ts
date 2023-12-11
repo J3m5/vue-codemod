@@ -1,8 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../vue-as-namespace-import')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../vue-as-namespace-import'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `import Vue from "vue";`,
   `import * as Vue from "vue";`,
@@ -10,7 +10,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `import Vue, { nextTick } from "vue";`,
   `import * as Vue, { nextTick } from "vue";`,

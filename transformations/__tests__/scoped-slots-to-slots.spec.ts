@@ -1,8 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../scoped-slots-to-slots')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../scoped-slots-to-slots'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `this.$scopedSlots
   this["$scopedSlots"]

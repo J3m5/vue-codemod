@@ -1,14 +1,14 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../add-import')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../add-import.js'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'default',
-      local: 'Vue',
+      local: 'Vue'
     },
-    source: 'vue',
+    source: 'vue'
   },
   ``,
   `import Vue from "vue";`,
@@ -16,13 +16,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
-      imported: 'createApp',
+      imported: 'createApp'
     },
-    source: 'vue',
+    source: 'vue'
   },
   ``,
   `import { createApp } from "vue";`,
@@ -30,14 +30,14 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
       imported: 'createApp',
-      local: 'createVueApp',
+      local: 'createVueApp'
     },
-    source: 'vue',
+    source: 'vue'
   },
   ``,
   `import { createApp as createVueApp } from "vue";`,
@@ -45,13 +45,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'namespace',
-      local: 'Vue',
+      local: 'Vue'
     },
-    source: 'vue',
+    source: 'vue'
   },
   ``,
   `import * as Vue from "vue";`,
@@ -59,13 +59,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'default',
-      local: 'Vue',
+      local: 'Vue'
     },
-    source: 'vue',
+    source: 'vue'
   },
   `import Vue from "vue";`,
   `import Vue from "vue";`,
@@ -73,13 +73,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
-      imported: 'createApp',
+      imported: 'createApp'
     },
-    source: 'vue',
+    source: 'vue'
   },
   `import { createApp } from "vue";`,
   `import { createApp } from "vue";`,
@@ -87,13 +87,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
-      imported: 'createApp',
+      imported: 'createApp'
     },
-    source: 'vue',
+    source: 'vue'
   },
   `import Vue from "vue";`,
   `import Vue, { createApp } from "vue";`,
@@ -101,13 +101,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
-      imported: 'h',
+      imported: 'h'
     },
-    source: 'vue',
+    source: 'vue'
   },
   `import { createApp } from "vue";`,
   `import { createApp, h } from "vue";`,
@@ -115,13 +115,13 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
     specifier: {
       type: 'named',
-      imported: 'h',
+      imported: 'h'
     },
-    source: 'vue',
+    source: 'vue'
   },
   `import * as Vue from "vue";`,
   `import * as Vue from "vue";\nimport { h } from "vue";`,

@@ -3,6 +3,7 @@
   "exclude": [],
   "compilerOptions": {
     "lib": ["ES2020", "DOM"],
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "strict": false
   }
 }

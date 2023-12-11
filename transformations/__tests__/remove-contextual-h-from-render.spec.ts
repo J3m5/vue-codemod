@@ -1,8 +1,8 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-contextual-h-from-render')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../remove-contextual-h-from-render'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default { render: h => h("div", ["hello"]) };`,
   `import { h } from "vue";\nexport default { render: () => h("div", ["hello"]) };`,
@@ -10,7 +10,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default { render: function(h) { return h("div", ["hello"]) } };`,
   `import { h } from "vue";\nexport default { render: function() { return h("div", ["hello"]) } };`,
@@ -18,7 +18,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `export default { render(h) { return h("div", ["hello"]); } };`,
   `import { h } from "vue";\nexport default { render() { return h("div", ["hello"]); } };`,

@@ -10,6 +10,7 @@ export const store = reactive({
   config: {
     vscodeInsiders: false,
   },
+  runtime: 'ts',
 })
 
 export function initStore() {
@@ -17,6 +18,6 @@ export function initStore() {
     .then((r) => r.json())
     .then((r) => {
       Object.assign(store, r)
-      if (!store.current) store.current = 'define-component'
+      if (!store.current) store.current = 'composition-api'
     })
 }

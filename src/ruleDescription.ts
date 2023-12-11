@@ -1,4 +1,9 @@
-export let ruleDescription = {
+export const ruleDescription: {
+  [ruleName: string]: { description: string | string[] }
+} = {
+  'composition-api': {
+    description: 'Options API to composition API'
+  },
   'new-component-api': {
     description:
       'https://v3-migration.vuejs.org/breaking-changes/global-api.html#a-new-global-api-createapp'
@@ -36,8 +41,7 @@ export let ruleDescription = {
       'https://v3-migration.vuejs.org/breaking-changes/custom-directives.html#overview'
   },
   'remove-vue-set-and-delete': {
-    description:
-      'https://v3-migration.vuejs.org/breaking-changes/#removed-apis'
+    description: 'https://v3-migration.vuejs.org/breaking-changes/#removed-apis'
   },
   'rename-lifecycle': {
     description:
@@ -52,7 +56,8 @@ export let ruleDescription = {
       'https://v3-migration.vuejs.org/breaking-changes/global-api-treeshaking.html'
   },
   'v-model': {
-    description: 'https://v3-migration.vuejs.org/breaking-changes/v-model.html#overview'
+    description:
+      'https://v3-migration.vuejs.org/breaking-changes/v-model.html#overview'
   },
   'render-to-resolveComponent': {
     description:
@@ -97,17 +102,20 @@ export let ruleDescription = {
       'https://v3-migration.vuejs.org/breaking-changes/transition-group.html#overview'
   },
   'v-bind-order-sensitive': {
-    description: 'https://v3-migration.vuejs.org/breaking-changes/v-bind.html#overview'
+    description:
+      'https://v3-migration.vuejs.org/breaking-changes/v-bind.html#overview'
   },
   'v-for-v-if-precedence-changed': {
-    description: 'https://v3-migration.vuejs.org/breaking-changes/v-if-v-for.html#overview'
+    description:
+      'https://v3-migration.vuejs.org/breaking-changes/v-if-v-for.html#overview'
   },
   'remove-listeners': {
     description:
       'https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html#overview'
   },
   'v-bind-sync': {
-    description: 'https://v3-migration.vuejs.org/breaking-changes/v-model.html#overview'
+    description:
+      'https://v3-migration.vuejs.org/breaking-changes/v-model.html#overview'
   },
   'remove-v-on-native': {
     description:

@@ -1,16 +1,22 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { getCntFunc } from '../src/report'
+import { transformAST as transformAddImport } from './add-import'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find Vue.version
   const versionCalls = root.find(j.MemberExpression, n => {
-    return n.property.name === 'version' && n.object.name === 'Vue'
+    return (
+      'name' in n.property &&
+      n.property.name === 'version' &&
+      'name' in n.object &&
+      n.object.name === 'Vue'
+    )
   })
 
   if (versionCalls.length) {
-    const addImport = require('./add-import')
-    addImport.transformAST(
+    transformAddImport(
+      // @ts-ignore
       { root, j },
       {
         specifier: {

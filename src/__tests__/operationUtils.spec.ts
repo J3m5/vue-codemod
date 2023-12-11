@@ -1,4 +1,14 @@
-import * as operationUtils from '../operationUtils'
+import {
+  insertTextAfter,
+  insertTextAfterRange,
+  insertTextAt,
+  insertTextBefore,
+  insertTextBeforeRange,
+  removeRange,
+  replaceText,
+  replaceTextRange,
+  remove
+} from '../operationUtils'
 
 describe('run-operationUtils', () => {
   const node: any = { range: [54, 106] }
@@ -9,62 +19,65 @@ describe('run-operationUtils', () => {
   const blankTest: string = ''
 
   it('insertTextAfter code to equal object', () => {
-    expect(operationUtils.insertTextAfter(node, modifyText)).toStrictEqual({
+    expect(insertTextAfter(node, modifyText)).toStrictEqual({
       range: [node.range[1], node.range[1]],
-      text: modifyText,
+      text: modifyText
     })
   })
 
   it('insertTextAfterRange code to equal object', () => {
-    expect(
-      operationUtils.insertTextAfterRange([start, end], modifyText)
-    ).toStrictEqual({ range: [end, end], text: modifyText })
+    expect(insertTextAfterRange([start, end], modifyText)).toStrictEqual({
+      range: [end, end],
+      text: modifyText
+    })
   })
 
   it('insertTextAt code to equal object', () => {
-    expect(operationUtils.insertTextAt(rangeAt, modifyText)).toStrictEqual({
+    expect(insertTextAt(rangeAt, modifyText)).toStrictEqual({
       range: [rangeAt, rangeAt],
-      text: modifyText,
+      text: modifyText
     })
   })
 
   it('insertTextBefore code to equal object', () => {
-    expect(operationUtils.insertTextBefore(node, modifyText)).toStrictEqual({
+    expect(insertTextBefore(node, modifyText)).toStrictEqual({
       range: [node.range[0], node.range[0]],
-      text: modifyText,
+      text: modifyText
     })
   })
 
   it('insertTextBeforeRange code to equal object', () => {
-    expect(
-      operationUtils.insertTextBeforeRange([start, end], modifyText)
-    ).toStrictEqual({ range: [start, start], text: modifyText })
+    expect(insertTextBeforeRange([start, end], modifyText)).toStrictEqual({
+      range: [start, start],
+      text: modifyText
+    })
   })
 
   it('remove code to equal object', () => {
-    expect(operationUtils.remove(node)).toStrictEqual({
+    expect(remove(node)).toStrictEqual({
       range: node.range,
-      text: blankTest,
+      text: blankTest
     })
   })
 
   it('removeRange code to equal object', () => {
-    expect(operationUtils.removeRange([start, end])).toStrictEqual({
+    expect(removeRange([start, end])).toStrictEqual({
       range: [start, end],
-      text: blankTest,
+      text: blankTest
     })
   })
 
   it('replaceText code to equal object', () => {
-    expect(operationUtils.replaceText(node, modifyText)).toStrictEqual({
+    expect(replaceText(node, modifyText)).toStrictEqual({
       range: node.range,
-      text: modifyText,
+      text: modifyText
     })
   })
 
   it('replaceTextRange code to equal object', () => {
-    expect(
-      operationUtils.replaceTextRange(node.range, modifyText)
-    ).toStrictEqual({ range: node.range, text: modifyText })
+    expect(replaceTextRange(node.range, modifyText)).toStrictEqual({
+      range: node.range,
+      text: modifyText
+    })
   })
 })

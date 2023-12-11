@@ -5,15 +5,20 @@ import { pushManualList } from '../../src/report'
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context
 
-  const rootNodes: any = root
+  const rootNodes = root
     .find(j.MemberExpression, {
       object: {
         name: 'Vue'
       }
     })
-    .filter((node: any) => node?.value.property?.name !== 'createApp')
+    .filter(node => {
+      return (
+        'name' in node.value.property &&
+        node.value.property.name !== 'createApp'
+      )
+    })
   if (rootNodes) {
-    rootNodes.forEach((node: any) => {
+    rootNodes.forEach(node => {
       const path = filename
       const name = 'Global Vue API is changed to use an application instance'
       const suggest =

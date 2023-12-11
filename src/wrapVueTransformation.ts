@@ -1,56 +1,51 @@
 import type { Operation } from './operationUtils'
-import type VueTransformation from './VueTransformation'
-import { Node } from 'vue-eslint-parser/ast/nodes'
-import * as parser from 'vue-eslint-parser'
+import type { Node } from 'vue-eslint-parser/ast/nodes'
+import { parse, AST } from 'vue-eslint-parser'
 import { getCntFunc } from './report'
+import type { FileInfo } from 'jscodeshift'
 
 const BOM = '\uFEFF'
-
-type FileInfo = {
-  path: string
-  source: string
-}
 
 export type Context = {
   file: FileInfo
 }
 
-export type VueASTTransformation<Params = void> = {
-  (context: Context, params: Params): Operation[]
+export type VueASTTransformation = {
+  (context: Context, params: object): Operation[]
   type?: string
 }
 
 export function createTransformAST(
   nodeFilter: (node: Node) => boolean,
-  fix: (node: Node, source?: string) => Operation[],
+  fix: (node: Node, source: string) => Operation[],
   ruleName: string
 ) {
-  function findNodes(context: any): Node[] {
+  function findNodes(context: Context) {
     const { file } = context
     const source = file.source
     const options = { sourceType: 'module' }
-    const ast = parser.parse(source, options)
-    let toFixNodes: Node[] = []
-    let root: Node = <Node>ast.templateBody
+    const ast = parse(source, options)
+    const toFixNodes: Node[] = []
+    const root: Node = <Node>ast.templateBody
 
-    parser.AST.traverseNodes(root, {
+    AST.traverseNodes(root, {
       enterNode(node: Node) {
         if (nodeFilter(node)) {
           toFixNodes.push(node)
         }
       },
-      leaveNode(node: Node) {}
+      leaveNode() {}
     })
 
     return toFixNodes
   }
 
-  const transformAST: VueASTTransformation = context => {
+  const transformAST = (context: Context) => {
     const cntFunc = getCntFunc(ruleName, global.outputReport)
     let fixOperations: Operation[] = []
     const { file } = context
     const source = file.source
-    const toFixNodes: Node[] = findNodes(context)
+    const toFixNodes = findNodes(context)
     toFixNodes.forEach(node => {
       const operations = fix(node, source)
       if (operations.length) {
@@ -64,10 +59,10 @@ export function createTransformAST(
   return transformAST
 }
 
-export default function astTransformationToVueTransformationModule<
-  Params = any
->(transformAST: VueASTTransformation<Params>): VueTransformation {
-  const transform: VueTransformation = (file, options: Params) => {
+export default function astTransformationToVueTransformationModule(
+  transformAST: VueASTTransformation
+) {
+  const transform = (file: FileInfo, options: object) => {
     const source = file.source
     const fixOperations: Operation[] = transformAST({ file }, options)
 
@@ -94,10 +89,10 @@ export function applyOperation(
   let lastPos: number = Number.MIN_VALUE,
     output: string = bom
 
-  let applyOperations: Operation[] = []
+  const applyOperations: Operation[] = []
 
   // The Lodash grouping function is called to group the objects in the array according to range
-  let tempOperation: Operation | null = mergeOperations(tempOperations, text)
+  const tempOperation: Operation | null = mergeOperations(tempOperations, text)
   if (tempOperation) {
     applyOperations.push(tempOperation)
   }
@@ -148,7 +143,7 @@ export function applyOperation(
  */
 function mergeOperations(
   operations: Operation[],
-  sourceCode: String
+  sourceCode: string
 ): Operation | null {
   if (operations.length === 0) {
     return null

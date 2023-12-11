@@ -1,13 +1,13 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 
-const nextTick = require('../next-tick')
-const observable = require('../observable')
-const version = require('../version')
-const treeShaking = require('../tree-shaking')
+import nextTick, { parser as nextTickParser } from '../next-tick'
+import observable, { parser as nextObservable } from '../observable'
+import version, { parser as nextTickVersion } from '../version'
+import treeShaking, { parser as nextTreeShaking } from '../tree-shaking'
 
 // Vue.nextTick() => nextTick()
 defineInlineTest(
-  nextTick,
+  { default: nextTick, parser: nextTickParser },
   {},
   `import Vue from 'vue'
 Vue.nextTick(() => {
@@ -24,7 +24,7 @@ nextTick(() => {
 
 // Vue.observable() => reactive()
 defineInlineTest(
-  observable,
+  { default: observable, parser: nextObservable },
   {},
   `import Vue from 'vue'
 const state = Vue.observable({ count: 0 })`,
@@ -35,7 +35,7 @@ const state = reactive({ count: 0 })`,
 
 // Vue.version() => version()
 defineInlineTest(
-  version,
+  { default: version, parser: nextTickVersion },
   {},
   `import Vue from 'vue'
 var version = Number(Vue.version.split('.')[0])`,
@@ -45,7 +45,7 @@ var version = Number(version.split('.')[0])`,
 )
 
 defineInlineTest(
-  treeShaking,
+  { default: treeShaking, parser: nextTreeShaking },
   {},
   `import Vue from 'vue'
 Vue.nextTick(function() {})

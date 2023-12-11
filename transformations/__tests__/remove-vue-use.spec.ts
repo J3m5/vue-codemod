@@ -1,10 +1,10 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
-const transform = require('../remove-vue-use')
+import { defineInlineTest } from '../../src/testUtils.js'
+import transform, { parser } from '../remove-vue-use'
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    removablePlugins: ['VueRouter'],
+    removablePlugins: ['VueRouter']
   },
   `Vue.use(VueRouter)`,
   ``,
@@ -12,9 +12,9 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    removablePlugins: ['VueRouter'],
+    removablePlugins: ['VueRouter']
   },
   `import VueRouter from "vue-router";\nVue.use(VueRouter)`,
   ``,
@@ -22,9 +22,9 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    removablePlugins: ['VueRouter'],
+    removablePlugins: ['VueRouter']
   },
   `Vue.use(Vuetify)`,
   `Vue.use(Vuetify)`,
@@ -32,7 +32,7 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {},
   `app.use(router);`,
   `app.use(router);`,
@@ -40,9 +40,9 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    removablePlugins: ['VueRouter'],
+    removablePlugins: ['VueRouter']
   },
   `process.env.NODE_ENV === 'development' ? Vue.use(VueRouter) : null`,
   `process.env.NODE_ENV === 'development' ? Vue.use(VueRouter) : null`,

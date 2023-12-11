@@ -1,20 +1,20 @@
-import { defineInlineTest } from 'jscodeshift/src/testUtils'
+import { defineInlineTest } from '../../src/testUtils.js'
 import type { GlobalApi } from '../../src/global'
-const transform = require('../root-prop-to-use')
+import transform, { parser } from '../root-prop-to-use'
 
 global.globalApi = []
-let api1: GlobalApi = {
+const api1: GlobalApi = {
   name: 'api1',
   path: 'src/directive/permission/api1.js'
 }
-let api2: GlobalApi = { name: 'api2', path: 'src/directive/api2.js' }
+const api2: GlobalApi = { name: 'api2', path: 'src/directive/api2.js' }
 global.globalApi.push(api1)
 global.globalApi.push(api2)
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    rootPropName: 'router',
+    rootPropName: 'router'
   },
   `createApp({ router });`,
   `createApp({}).use(router);`,
@@ -22,9 +22,9 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    rootPropName: 'router',
+    rootPropName: 'router'
   },
   `Vue.createApp({ router });`,
   `Vue.createApp({}).use(router);`,
@@ -32,16 +32,16 @@ defineInlineTest(
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   {
-    rootPropName: 'router',
+    rootPropName: 'router'
   },
   `createApp({});`,
   `createApp({});`
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   { rootPropName: '', isGlobalApi: true },
   `Vue.createApp();`,
   `import api1 from "../src/directive/permission/api1.js";
@@ -51,7 +51,7 @@ Vue.createApp().use(api1).use(api2);`,
 )
 
 defineInlineTest(
-  transform,
+  { default: transform, parser },
   { rootPropName: '', isGlobalApi: true },
   `import Comp1 from "./Comp1.vue"
   export default {

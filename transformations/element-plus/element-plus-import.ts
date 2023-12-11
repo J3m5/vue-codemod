@@ -10,7 +10,10 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('element-plus-import', subRules)
   // find element-ui import
   const elementPlusImport = root.find(j.ImportDeclaration, node => {
-    return node.source.value.toString().startsWith('element-ui')
+    return (
+      node.source.value != null &&
+      node.source.value.toString().startsWith('element-ui')
+    )
   })
   if (elementPlusImport.length) {
     elementPlusImport.forEach(({ node }) => {

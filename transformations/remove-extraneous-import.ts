@@ -1,14 +1,45 @@
 import wrap from '../src/wrapAstTransformation'
-import type { ASTTransformation } from '../src/wrapAstTransformation'
-import type {
-  ImportSpecifier,
-  ImportDefaultSpecifier,
-  ImportNamespaceSpecifier
-} from 'jscodeshift'
-import type { Collection } from 'jscodeshift/src/Collection'
+import type { ASTTransformation, Context } from '../src/wrapAstTransformation'
 
-type Params = {
-  localBinding: string
+const getSpecifier = ({
+  root,
+  j,
+  localBinding,
+}: {
+  root: Context['root']
+  j: Context['j']
+  localBinding?: string
+}) => {
+  if (!localBinding) {
+    return
+  }
+
+  const namedImportCollection = root.find(j.ImportSpecifier, {
+    local: {
+      name: localBinding,
+    },
+  })
+
+  if (namedImportCollection.length) {
+    return namedImportCollection
+  }
+  const importDefaultCollection = root.find(j.ImportDefaultSpecifier, {
+    local: {
+      name: localBinding,
+    },
+  })
+  if (importDefaultCollection.length) {
+    return importDefaultCollection
+  }
+
+  const importNamespaceCollection = root.find(j.ImportNamespaceSpecifier, {
+    local: {
+      name: localBinding,
+    },
+  })
+  if (importNamespaceCollection.length) {
+    return importNamespaceCollection
+  }
 }
 
 /**
@@ -19,13 +50,13 @@ type Params = {
  * if `foo` is unused, the statement would become `import 'bar'`.
  * It is because we are not sure if the module contains any side effects.
  */
-export const transformAST: ASTTransformation<Params> = (
-  { root, j },
-  { localBinding }
+export const transformAST: ASTTransformation<{ localBinding?: string }> = (
+  { root, j }: Context,
+  { localBinding } = {},
 ) => {
   const usages = root
     .find(j.Identifier, { name: localBinding })
-    .filter(identifierPath => {
+    .filter((identifierPath) => {
       const parent = identifierPath.parent.node
 
       // Ignore the import specifier
@@ -58,35 +89,13 @@ export const transformAST: ASTTransformation<Params> = (
     })
 
   if (!usages.length) {
-    let specifier: Collection<
-      ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier
-    > = root.find(j.ImportSpecifier, {
-      local: {
-        name: localBinding
-      }
-    })
+    const importCollection = getSpecifier({ root, j, localBinding })
 
-    if (!specifier.length) {
-      specifier = root.find(j.ImportDefaultSpecifier, {
-        local: {
-          name: localBinding
-        }
-      })
-    }
-
-    if (!specifier.length) {
-      specifier = root.find(j.ImportNamespaceSpecifier, {
-        local: {
-          name: localBinding
-        }
-      })
-    }
-
-    if (!specifier.length) {
+    if (!importCollection || !importCollection.length) {
       return
     }
 
-    const decl = specifier.closest(j.ImportDeclaration)
+    const decl = importCollection.closest(j.ImportDeclaration)
     const declNode = decl.get(0).node
     const peerSpecifiers = declNode.specifiers
     const source = declNode.source.value
@@ -96,7 +105,7 @@ export const transformAST: ASTTransformation<Params> = (
       'vue',
       'vue-router',
       'vuex',
-      '@vue/composition-api'
+      '@vue/composition-api',
     ]
     if (
       peerSpecifiers.length === 1 &&
@@ -105,7 +114,7 @@ export const transformAST: ASTTransformation<Params> = (
       decl.remove()
     } else {
       // otherwise, only remove the specifier
-      specifier.remove()
+      importCollection.remove()
     }
   }
 }

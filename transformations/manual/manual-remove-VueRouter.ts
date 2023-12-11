@@ -5,11 +5,11 @@ import { pushManualList } from '../../src/report'
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context
 
-  const rootNodes: any = root.find(j.Identifier, {
+  const rootNodes = root.find(j.Identifier, {
     name: 'VueRouter'
   })
   if (rootNodes) {
-    rootNodes.forEach((node: any) => {
+    rootNodes.forEach(node => {
       const path = filename
       const name = 'Removed VueRouter'
       const suggest =

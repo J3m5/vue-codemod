@@ -1,11 +1,12 @@
-import * as OperationUtils from '../src/operationUtils'
-import * as util from 'util'
+import createDebug from 'debug'
+import { inspect } from 'util'
 import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Operation } from '../src/operationUtils'
-import createDebug from 'debug'
+import { insertTextAfter, remove } from '../src/operationUtils'
+
 import {
-  default as wrap,
-  createTransformAST
+  createTransformAST,
+  default as wrap
 } from '../src/wrapVueTransformation'
 
 export const transformAST = createTransformAST(
@@ -18,7 +19,7 @@ export default wrap(transformAST)
 
 const debug = createDebug('vue-codemod:rule')
 
-let operatingParentElements: any = []
+const operatingParentElements: any = []
 
 function nodeFilter(node: Node): boolean {
   return (
@@ -35,7 +36,7 @@ function nodeFilter(node: Node): boolean {
  * @param node The Target Node
  */
 function fix(node: any): Operation[] {
-  let fixOperations: Operation[] = []
+  const fixOperations: Operation[] = []
   const target: any = node!.parent!.parent
 
   // The current node has no attribute that is v-for
@@ -103,18 +104,15 @@ function fix(node: any): Operation[] {
     return fixOperations
   }
 
-  let expression: string = getExpression(node.value)
+  const expression: string = getExpression(node.value)
 
-  fixOperations.push(OperationUtils.remove(node))
+  fixOperations.push(remove(node))
   if (
     !elderHasKey &&
-    util.inspect(operatingParentElements).indexOf(util.inspect(elder.range)) ==
-      -1
+    inspect(operatingParentElements).indexOf(inspect(elder.range)) == -1
   ) {
     operatingParentElements.push(elder.range)
-    fixOperations.push(
-      OperationUtils.insertTextAfter(elder, ' :key=' + expression)
-    )
+    fixOperations.push(insertTextAfter(elder, ' :key=' + expression))
   }
   return fixOperations
 }

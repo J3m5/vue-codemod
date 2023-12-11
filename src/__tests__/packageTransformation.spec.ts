@@ -1,8 +1,7 @@
-import * as pack from '../packageTransformation'
+import { process } from '../packageTransformation'
 
 describe('run-packageTransformation', () => {
-let input =
-`{
+  const input = `{
 	"dependencies": {
 		"vue": "^2.6.10",
 		"vue-i18n": "^8.14.0",
@@ -40,9 +39,8 @@ let input =
 		}
 	}
 }
-` 
-let output =
-`{
+`
+  const output = `{
 	"dependencies": {
 		"vue": "^3.1.1",
 		"vue-i18n": "^9.1.6",
@@ -78,15 +76,14 @@ let output =
 		}
 	}
 }
-` 
+`
   it('insertTextAfter code to equal object', () => {
-    expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
+    expect(process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
   })
 })
 
 describe('upgrade element-ui', () => {
-	let input =
-	`{
+  const input = `{
 		"dependencies": {
 			"vue": "^2.6.10",
 			"vue-i18n": "^8.14.0",
@@ -96,9 +93,8 @@ describe('upgrade element-ui', () => {
 			"element-ui": "^1.0.0"
 		}
 	}
-	` 
-	let output =
-	`{
+	`
+  const output = `{
 		"dependencies": {
 			"vue": "^3.1.1",
 			"vue-i18n": "^9.1.6",
@@ -107,9 +103,8 @@ describe('upgrade element-ui', () => {
 			"element-plus": "^1.0.2-beta.55"
 		}
 	}
-	` 
-	  it('upgread element-ui to element-plus', () => {
-		expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
-	  })
-	})
-	
+	`
+  it('upgread element-ui to element-plus', () => {
+    expect(process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
+  })
+})

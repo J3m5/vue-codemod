@@ -1,24 +1,33 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "declaration": true,
-    "sourceMap": false,
-    "target": "ES2018",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "allowJs": false,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "resolveJsonModule": true,
+    /* Base Options: */
     "esModuleInterop": true,
-    "removeComments": false,
-    "jsx": "preserve",
-    "lib": ["ES2018", "DOM"],
-    "types": ["jest", "jscodeshift", "node"],
-    "rootDir": "."
+    "skipLibCheck": true,
+    "target": "es2022",
+    // "verbatimModuleSyntax": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+
+    /* Strictness */
+    "strict": true,
+
+    // "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+  
+    /* If transpiling with TypeScript: */
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+
+    /* If your code doesn't run in the DOM: */
+    "lib": ["es2022"],
+
+    /* If you're building for a library: */
+    "composite": true,
+    "incremental": true,
+    "types": ["jest", "jscodeshift", "node", "ast-types", "bun-types"]
   },
-  "exclude": ["dist", "playground"]
+  "exclude": ["dist", "playground", "node_modules"]
 }
